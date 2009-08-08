@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class Roidcast extends Activity {
-	private static final String TAG = "Roidcast";
+	public static final String TAG = "Roidcast";
 	
     /** Called when the activity is first created. */
     @Override
