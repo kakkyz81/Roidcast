@@ -2,27 +2,13 @@ package net.krks.android.roidcast;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Date;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import net.krks.android.roidcast.Podcast.PodcastItem;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.content.Intent;
 import android.util.Log;
 import android.util.Xml;
 
@@ -60,19 +46,17 @@ public class XMLParse {
 			while(eventType != XmlPullParser.END_DOCUMENT && !done) {
 				String name = null;
 				
-				String text = parser.getText();
+				//String text = parser.getText();
 				
-				String type = null;
+				//String type = null;
 				name = parser.getName();
 				
 				switch(eventType) {
 				case XmlPullParser.START_DOCUMENT:
-					//
-					type = "START_DOCUMENT";
+					//type = "START_DOCUMENT"; //for debug
 					break;
 				case XmlPullParser.START_TAG:
-					//
-					type = "START_TAG";
+					//type = "START_TAG"; //for debug
 					if(name.equalsIgnoreCase("channel") && mainDepth == 0) {
 						//channel+1がメイン部分,+2は個別アイテム 
 						mainDepth = depth + 1;
@@ -125,12 +109,10 @@ public class XMLParse {
 					}
 					break;
 				case XmlPullParser.END_TAG:
-					//
-					type = "END_TAG";
+					//type = "END_TAG"; //for debug
 					break;
 				case XmlPullParser.TEXT:
-					//
-					type = "TEXT";
+					//type = "TEXT"; //for debug
 					break;
 				}
 				
@@ -142,9 +124,11 @@ public class XMLParse {
 			if(p.getItems().size() > MAXITEMS) { done = true; }
 			
 		} catch (XmlPullParserException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			new RoidcatUtil().eLog(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			new RoidcatUtil().eLog(e);
 		}
 		
 		return p;

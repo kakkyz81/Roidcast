@@ -3,15 +3,25 @@
  */
 package net.krks.android.roidcast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Podcast情報を持つためのクラス
+ * $Id$
  * @author kakkyz
  * 
  */
-public class Podcast {
+public class Podcast implements Serializable{
+	private static final long serialVersionUID = -2446412730923814808L;
+	
+	@Override
+	public String toString() {
+		return title + "\n" ;
+		
+	};
+	
 	public Podcast() {
 		super();
 		this.categories = new ArrayList<String>();
@@ -35,8 +45,9 @@ public class Podcast {
 	 * 
 	 * @author kakkyz
 	 */
-	public class PodcastItem {
-
+	public class PodcastItem implements Serializable{
+		private static final long serialVersionUID = 6908868932993712873L;
+		
 		protected String title = null;
 		protected String link = null;
 		protected String audioUri = null;

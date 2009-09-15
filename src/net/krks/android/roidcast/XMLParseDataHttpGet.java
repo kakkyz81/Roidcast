@@ -28,8 +28,7 @@ public class XMLParseDataHttpGet extends DefaultHttpClient{
 		try {
 			httpGet.setURI(new URI(uri));
 		} catch(URISyntaxException ex){
-			Log.e(Roidcast.TAG, "URISyntaxException");
-			ex.printStackTrace();
+			new RoidcatUtil().eLog(ex);
 			return null;
 		}
 		
@@ -45,9 +44,9 @@ public class XMLParseDataHttpGet extends DefaultHttpClient{
 			}
 		    return response.getEntity().getContent();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			new RoidcatUtil().eLog(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			new RoidcatUtil().eLog(e);
 		}
 		
       return null;
