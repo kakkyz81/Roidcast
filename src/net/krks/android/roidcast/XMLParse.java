@@ -22,6 +22,7 @@ public class XMLParse {
 
 	/**
 	 * uriを開いて解析結果をpodcastオブジェクトにして返す
+	 * 解析が失敗した場合は、nullを戻す
 	 * 
 	 * @param uri
 	 * @return Podcast 
@@ -130,6 +131,8 @@ public class XMLParse {
 			//e.printStackTrace();
 			new RoidcatUtil().eLog(e);
 		}
+		// no item is parse error!
+		if(p.getItems().size() == 0) {p = null;}
 		
 		return p;
 	}

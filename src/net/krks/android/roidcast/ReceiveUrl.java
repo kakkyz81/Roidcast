@@ -12,6 +12,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 /**
+ * ブラウザなどから呼び出されて、URLを保存するためのクラス
+ * 正常にURLを保存できた時は、Roidcastのメイン画面へ遷移する
+ * 
  * @author kakkyz
  *
  */
@@ -32,7 +35,26 @@ public class ReceiveUrl extends Activity {
     	XMLParse xmlParse = new XMLParse();
     	podcast = xmlParse.parsePodcastXML(uri);
     	
-    	// パース結果を保存する
+    	if(podcast != null) {
+        	// パース結果を保存する
+	    	savePodcast(podcast);
+	    	// 次のActivity（メイン画面）を呼び出す
+	    	Intent nextIntent = new Intent(getApplicationContext(),Roidcast.class);
+	    	startActivity(nextIntent);
+    	} else {
+    		// パースできなかった場合、メッセージを出力する
+    		Log.i(Roidcast.TAG,"ParseError");
+    	}
+        
+    }
+    
+    /**
+     * podcastを保存する 
+     * @param podcast
+     */
+    protected void savePodcast(Podcast podcast) {
+    	if(podcast == null) { throw new AssertionError(); }
+
     	RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
     	ArrayList<Podcast> podlist = r.doLoad(); // TODO 読み込んで追加して保存という手順が非効率な気がする
     	podlist.add(podcast);
@@ -42,10 +64,5 @@ public class ReceiveUrl extends Activity {
 			new RoidcatUtil().eLog(e);
 		}
     	r = null; // 後処理
-    	
-    	// 次のActivity（メイン画面）を呼び出す
-    	Intent nextIntent = new Intent(getApplicationContext(),Roidcast.class);
-    	startActivity(nextIntent);
-        
     }
 }
