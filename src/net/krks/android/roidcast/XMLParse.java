@@ -18,7 +18,7 @@ import android.util.Xml;
  */
 public class XMLParse {
 	/** 個別mp3データの件数 */
-	private static final int MAXITEMS = 20;
+	private static final int MAXITEMS = 15;
 
 	/**
 	 * uriを開いて解析結果をpodcastオブジェクトにして返す
@@ -125,14 +125,12 @@ public class XMLParse {
 			if(p.getItems().size() > MAXITEMS) { done = true; }
 			
 		} catch (XmlPullParserException e) {
-			//e.printStackTrace();
 			new RoidcatUtil().eLog(e);
 		} catch (IOException e) {
-			//e.printStackTrace();
 			new RoidcatUtil().eLog(e);
 		}
 		// no item is parse error!
-		if(p.getItems().size() == 0) {p = null;}
+		if(p.isEmpty()) {p = null;}
 		
 		return p;
 	}

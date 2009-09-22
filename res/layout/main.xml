@@ -4,34 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-
-
-
-
-<LinearLayout android:id="@+id/SearchBoxLayout" android:layout_height="wrap_content" 
-	android:layout_width="fill_parent" android:orientation="horizontal">
-	<Button android:layout_width="wrap_content" 
-	android:layout_height="wrap_content" 
-	android:id="@+id/SearchBotton01" android:text="Search"></Button>
-	<EditText android:text="EditText01" android:id="@+id/EditText01"
-	android:layout_width="fill_parent" android:layout_height="fill_parent">
-	</EditText>
-
-</LinearLayout>
-
-<ListView android:id="@+id/PodCastListView01"
- android:layout_width="wrap_content"
-  android:layout_height="wrap_content">
-  </ListView>
-
- <ListView android:id="@android:id/list"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content">
-  </ListView>
-  <TextView 
-    android:id="@android:id/empty"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:text="@string/empty_message" />
+<ExpandableListView android:layout_width="wrap_content" android:layout_height="wrap_content" 
+  android:id="@+id/RoidcastELVlist"></ExpandableListView>
 
 </LinearLayout>

@@ -40,6 +40,11 @@ public class Podcast implements Serializable{
 	protected ArrayList<PodcastItem> items = null;
 	protected Date lastBuildDate = null;
 
+	public boolean isEmpty() {
+		return (0 == items.size());
+	}
+	
+	
 	/**
 	 * podcastのitem情報を持つクラス
 	 * 
@@ -51,7 +56,8 @@ public class Podcast implements Serializable{
 		protected String title = null;
 		protected String link = null;
 		protected String audioUri = null;
-
+		protected Date lastPlayedDate = null;
+		
 		// 容量が大きくなるし、見せるつもりもないのでコメント情報は持たない
 		// protected String description = null;
 		// protected String content = null;
@@ -78,6 +84,21 @@ public class Podcast implements Serializable{
 		public void setAudioUri(String audioUri) {
 			this.audioUri = audioUri;
 		}
+
+		public Date getLastPlayedDate() {
+			return lastPlayedDate;
+		}
+
+		public void setLastPlayedDate(Date lastPlayedDate) {
+			this.lastPlayedDate = lastPlayedDate;
+		}
+		
+		@Override
+		public String toString() {
+			return 	title;
+		}
+		
+		
 	}
 
 	public String getTitle() {

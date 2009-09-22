@@ -14,8 +14,8 @@ import android.content.Context;
 import android.content.ContextWrapper;
 
 /**
+ * データをファイルに書き出す処理
  * @author kakkyz
- *
  */
 public class RoidcastFileIo extends ContextWrapper {
 	private static final String FILE_ID = "podcast";
@@ -53,7 +53,16 @@ public class RoidcastFileIo extends ContextWrapper {
 			}
 			
 		}
-		return array;
+		
+		// 空の要素を除いたものを戻す
+		ArrayList<Podcast> returnArray = new ArrayList<Podcast>();
+		for(Podcast p:array) {
+			if(!p.isEmpty()) {
+				returnArray.add(p);
+			}
+		}
+				
+		return returnArray;
 	}
 	
 }
