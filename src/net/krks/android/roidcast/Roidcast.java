@@ -54,7 +54,6 @@ public class Roidcast extends ExpandableListActivity {
 	
 	
 	public class RoidcastEVLAdapter extends BaseExpandableListAdapter {
-		//private HashMap<String,ArrayList<String>> groups = new HashMap<String,ArrayList<String>>();
 		private ArrayList<Podcast> podcastList = new ArrayList<Podcast>();
 		
 		public void setPodcastList(ArrayList<Podcast> podcastList) {

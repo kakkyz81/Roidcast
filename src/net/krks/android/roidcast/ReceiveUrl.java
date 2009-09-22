@@ -57,12 +57,29 @@ public class ReceiveUrl extends Activity {
 
     	RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
     	ArrayList<Podcast> podlist = r.doLoad(); // TODO 読み込んで追加して保存という手順が非効率な気がする
-    	podlist.add(podcast);
-    	try {
-			r.doSave(podlist);
-		} catch (IOException e) {
-			new RoidcatUtil().eLog(e);
-		}
+    	// 重複時は保存しない
+    	if(!isDuplicate(podlist, podcast)){
+			podlist.add(podcast);
+			try {
+				r.doSave(podlist);
+			} catch (IOException e) {
+				new RoidcatUtil().eLog(e);
+			}
+    	}
+    	
     	r = null; // 後処理
+    }
+    
+    /**
+     * podcastが重複していないかチェックする
+     * 
+     */
+    protected boolean isDuplicate(ArrayList<Podcast> a,Podcast newPodcast) {
+    	for(Podcast p:a) {
+    		if(p.getLink().equals(newPodcast.getLink())) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 }
