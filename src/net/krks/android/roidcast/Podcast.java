@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * Podcast情報を持つためのクラス
- * $Id$
+ * $Id: 1d78a8d6712777388ed32eaf01d9d12f749e6816 $
  * @author kakkyz
  * 
  */
@@ -36,6 +36,8 @@ public class Podcast implements Serializable{
 	protected String imageUri = null;
 	protected String author = null;
 	protected String summary = null;
+	protected String xmlUrl = null;
+	
 	protected ArrayList<String> categories = null;
 	protected ArrayList<PodcastItem> items = null;
 	protected Date lastBuildDate = null;
@@ -44,6 +46,52 @@ public class Podcast implements Serializable{
 		return (0 == items.size());
 	}
 	
+	/**
+	 * 再度クローリングをしてitem情報を最新のものを取得する
+	 */
+	public void reCrawl() {
+		XMLParse xmlParse = new XMLParse();
+		Podcast newPodcast = xmlParse.parsePodcastXML(xmlUrl);
+		if(newPodcast != null) {
+			refresh(newPodcast);
+		}
+	}
+	
+	/**
+	 * 新しいデータを受け取って、自分のデータを更新する
+	 * podcastItemは、再生した時間を保持しているので、単純に入れ替えできない。
+	 * @param newPodcast
+	 */
+	protected void refresh(Podcast newPodcast) {
+		ArrayList<PodcastItem> tmpItems = new ArrayList<PodcastItem>();
+		
+		/* まず新しいオブジェクトのリストを作り、それと同じ古いオブジェクトがあれば、
+		 * 古いオブジェクトを優先して採用する
+		 */
+		for(PodcastItem newItem:newPodcast.getItems()) {
+			tmpItems.add(newItem);
+			for(PodcastItem item:items) {
+				if(newItem.getAudioUri().equals(item.getAudioUri())) {
+					tmpItems.remove(newItem);
+					tmpItems.add(item);
+				}
+			}
+		}
+		items = tmpItems;
+	
+	    title         = newPodcast.getTitle();
+	    link          = newPodcast.getLink();
+	    description   = newPodcast.getDescription();
+	    language      = newPodcast.getLanguage();
+	    subtitle      = newPodcast.getSubtitle();
+	    imageUri      = newPodcast.getImageUri();
+	    author        = newPodcast.getAuthor();
+	    summary       = newPodcast.getSummary();
+	    categories    = newPodcast.getCategories();
+	    lastBuildDate = newPodcast.getLastBuildDate();
+	    //xmlUrl      = newPodcast.get//xmlUrl     ();
+
+	}
 	
 	/**
 	 * podcastのitem情報を持つクラス
@@ -187,6 +235,14 @@ public class Podcast implements Serializable{
 
 	public void setLastBuildDate(Date lastBuildDate) {
 		this.lastBuildDate = lastBuildDate;
+	}
+	
+	public String getXmlUrl() {
+		return xmlUrl;
+	}
+
+	public void setXmlUrl(String xmlUrl) {
+		this.xmlUrl = xmlUrl;
 	}
 
 }

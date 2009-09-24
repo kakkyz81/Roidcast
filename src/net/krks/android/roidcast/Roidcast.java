@@ -5,17 +5,22 @@ import java.util.ArrayList;
 
 import net.krks.android.roidcast.Podcast.PodcastItem;
 import android.app.ExpandableListActivity;
+import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.style.UpdateLayout;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 @SuppressWarnings("unused")
@@ -23,28 +28,72 @@ public class Roidcast extends ExpandableListActivity {
 	public static final String TAG = "Roidcast";
 	ExpandableListAdapter mAdapter;
 	
+	ArrayList<Podcast> loadData;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	Log.i(TAG,"onCreate @@@ roidast");
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
         
-        ArrayList<Podcast> loadData = doLoad();        
+        Button b = (Button)findViewById(R.id.RecrawlButton);
+        RoidcastClickLisner roidcastClickLisner = new RoidcastClickLisner();
+        b.setOnClickListener(roidcastClickLisner);
         
+        // TODO 起動時に自動でrecrawlする(すべきでないのでは？と考えとりあえず実装しない)
+        //loadData = doLoad();
+    }
+    
+    @Override
+	protected void onPause() {
+		super.onPause();
+		try {
+			doSave();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		loadData = doLoad();    
+        
+        //RoidcastEVLAdapter roidcastEVLAdapter = new RoidcastEVLAdapter(getApplicationContext());
         RoidcastEVLAdapter roidcastEVLAdapter = new RoidcastEVLAdapter();
         roidcastEVLAdapter.setPodcastList(loadData);
         
         // ExpandListViewを登録する時のお決まりの文法
         mAdapter = roidcastEVLAdapter;
         setListAdapter(mAdapter);
+        
+        //!?
         registerForContextMenu(getExpandableListView());
         
-        //setContentView(R.layout.main);
+	}
+
+	protected class RoidcastClickLisner implements OnClickListener{
+    	@Override
+    	public void onClick(View v) {
+    		RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
+    		loadData= r.doLoad();
+    		
+    		for(Podcast p:loadData) {
+    			p.reCrawl();
+    		}
+    		try {
+				r.doSave(loadData);
+			} catch (IOException e) {
+				new RoidcatUtil().eLog(e);
+			}    		
+    	}
     }
-	
-    public void doSave(ArrayList<Podcast> a) throws IOException{
+    
+    public void doSave() throws IOException{
     	RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
-    	r.doSave(a);
+    	r.doSave(loadData);
 	}
 	
 	public ArrayList<Podcast> doLoad(){
@@ -56,6 +105,14 @@ public class Roidcast extends ExpandableListActivity {
 	public class RoidcastEVLAdapter extends BaseExpandableListAdapter {
 		private ArrayList<Podcast> podcastList = new ArrayList<Podcast>();
 		
+		/*
+		protected LayoutInflater mInflater;
+		public RoidcastEVLAdapter(Context context) {
+			super();
+			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			
+		}
+		*/
 		public void setPodcastList(ArrayList<Podcast> podcastList) {
 			this.podcastList = podcastList;
 		}
@@ -148,13 +205,14 @@ public class Roidcast extends ExpandableListActivity {
             setTextViewParams(textView);
 			
 			Podcast p = (Podcast) getGroup(groupPosition);
-            textView.setText(p.getTitle());
+			//CharSequence c =  getResources().getText((R.string.last_publish_date));
+            textView.setText(p.getTitle() + "\n" + 
+            		p.getLastBuildDate().toLocaleString());
             return textView;
 		}
 		
 		@Override
 		public boolean hasStableIds() {
-			// TODO
 			return true;
 		}
 
@@ -180,4 +238,7 @@ public class Roidcast extends ExpandableListActivity {
         }
 
 	}
+
+
+	
 }

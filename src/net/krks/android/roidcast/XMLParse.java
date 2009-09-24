@@ -32,6 +32,7 @@ public class XMLParse {
 		XMLParseDataHttpGet xmlParceDataHttpGet = new XMLParseDataHttpGet();
 		InputStream in = xmlParceDataHttpGet.getImputStreamOnWeb(uri);
 		Podcast p = new Podcast();
+		p.setXmlUrl(uri);
 		
 		try {
 			XmlPullParser parser = Xml.newPullParser();

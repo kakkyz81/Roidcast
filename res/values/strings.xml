@@ -3,4 +3,6 @@
     <string name="hello">Hello World, Roidcast!</string>
     <string name="app_name">Roidcast</string>
 	<string name="empty_message">empty</string>
+	
+	<string name="last_publish_date">LastPublished at </string>
 </resources>
