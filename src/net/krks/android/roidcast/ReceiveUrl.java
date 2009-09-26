@@ -76,7 +76,7 @@ public class ReceiveUrl extends Activity {
      */
     protected boolean isDuplicate(ArrayList<Podcast> a,Podcast newPodcast) {
     	for(Podcast p:a) {
-    		if(p.getLink().equals(newPodcast.getLink())) {
+    		if(p.getXmlUrl().equals(newPodcast.getXmlUrl())) {
     			return true;
     		}
     	}

@@ -5,4 +5,5 @@
 	<string name="empty_message">empty</string>
 	
 	<string name="last_publish_date">LastPublished at </string>
+	<string name="activity_notfound">can't play this podcast for this machine.</string>
 </resources>

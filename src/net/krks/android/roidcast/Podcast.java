@@ -79,18 +79,22 @@ public class Podcast implements Serializable{
 		}
 		items = tmpItems;
 	
-	    title         = newPodcast.getTitle();
-	    link          = newPodcast.getLink();
-	    description   = newPodcast.getDescription();
-	    language      = newPodcast.getLanguage();
-	    subtitle      = newPodcast.getSubtitle();
-	    imageUri      = newPodcast.getImageUri();
-	    author        = newPodcast.getAuthor();
-	    summary       = newPodcast.getSummary();
-	    categories    = newPodcast.getCategories();
-	    lastBuildDate = newPodcast.getLastBuildDate();
-	    //xmlUrl      = newPodcast.get//xmlUrl     ();
+		title         = newPodcast.getTitle();
+		link          = newPodcast.getLink();
+		description   = newPodcast.getDescription();
+		language      = newPodcast.getLanguage();
+		subtitle      = newPodcast.getSubtitle();
+		imageUri      = newPodcast.getImageUri();
+		author        = newPodcast.getAuthor();
+		summary       = newPodcast.getSummary();
+		categories    = newPodcast.getCategories();
+		lastBuildDate = newPodcast.getLastBuildDate();
+		//xmlUrl      = newPodcast.get//xmlUrl     ();
 
+	}
+	
+	public String getLastBuildDateLocaleString() {
+		return (lastBuildDate != null) ? lastBuildDate.toLocaleString() : "";
 	}
 	
 	/**
@@ -104,6 +108,7 @@ public class Podcast implements Serializable{
 		protected String title = null;
 		protected String link = null;
 		protected String audioUri = null;
+		protected String mediaType = null;
 		protected Date lastPlayedDate = null;
 		
 		// 容量が大きくなるし、見せるつもりもないのでコメント情報は持たない
@@ -144,6 +149,14 @@ public class Podcast implements Serializable{
 		@Override
 		public String toString() {
 			return 	title;
+		}
+
+		public String getMediaType() {
+			return mediaType;
+		}
+
+		public void setMediaType(String mediaType) {
+			this.mediaType = mediaType;
 		}
 		
 		

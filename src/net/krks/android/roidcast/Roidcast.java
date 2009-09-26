@@ -4,27 +4,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import net.krks.android.roidcast.Podcast.PodcastItem;
+import net.krks.android.roidcast.R.layout;
 import android.app.ExpandableListActivity;
-import android.content.Context;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.style.UpdateLayout;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.VideoView;
 
 @SuppressWarnings("unused")
-public class Roidcast extends ExpandableListActivity {
+public class Roidcast extends ExpandableListActivity  implements View.OnClickListener{
 	public static final String TAG = "Roidcast";
 	ExpandableListAdapter mAdapter;
 	
@@ -32,14 +32,14 @@ public class Roidcast extends ExpandableListActivity {
 	
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState){
     	Log.i(TAG,"onCreate @@@ roidast");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
         Button b = (Button)findViewById(R.id.RecrawlButton);
-        RoidcastClickLisner roidcastClickLisner = new RoidcastClickLisner();
-        b.setOnClickListener(roidcastClickLisner);
+        //RoidcastClickLisner roidcastClickLisner = new RoidcastClickLisner();
+        b.setOnClickListener(this);
         
         // TODO 起動時に自動でrecrawlする(すべきでないのでは？と考えとりあえず実装しない)
         //loadData = doLoad();
@@ -51,7 +51,7 @@ public class Roidcast extends ExpandableListActivity {
 		try {
 			doSave();
 		} catch (IOException e) {
-			e.printStackTrace();
+			new RoidcatUtil().eLog(e);
 		}
 	}
 
@@ -59,21 +59,24 @@ public class Roidcast extends ExpandableListActivity {
 	protected void onStart() {
 		// TODO Auto-generated method stub
 		super.onStart();
-		loadData = doLoad();    
-        
-        //RoidcastEVLAdapter roidcastEVLAdapter = new RoidcastEVLAdapter(getApplicationContext());
+		    
+        doDraw();
+	}
+	
+	protected void doDraw() {
+		loadData = doLoad();
+		//RoidcastEVLAdapter roidcastEVLAdapter = new RoidcastEVLAdapter(getApplicationContext());
         RoidcastEVLAdapter roidcastEVLAdapter = new RoidcastEVLAdapter();
         roidcastEVLAdapter.setPodcastList(loadData);
         
         // ExpandListViewを登録する時のお決まりの文法
         mAdapter = roidcastEVLAdapter;
         setListAdapter(mAdapter);
-        
-        //!?
+      //!?
         registerForContextMenu(getExpandableListView());
         
 	}
-
+	/*
 	protected class RoidcastClickLisner implements OnClickListener{
     	@Override
     	public void onClick(View v) {
@@ -87,10 +90,11 @@ public class Roidcast extends ExpandableListActivity {
 				r.doSave(loadData);
 			} catch (IOException e) {
 				new RoidcatUtil().eLog(e);
-			}    		
+			}
+			
     	}
     }
-    
+    */
     public void doSave() throws IOException{
     	RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
     	r.doSave(loadData);
@@ -142,6 +146,7 @@ public class Roidcast extends ExpandableListActivity {
 			/* 子要素の表示はここで決まる */
             textView.setText(podcatItem.getTitle());
 			textView.setAudioUri(podcatItem.getAudioUri());
+			textView.setMediaType(podcatItem.getMediaType());
 			/* クリックされた時の動作を記述 */
             textView.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -151,9 +156,23 @@ public class Roidcast extends ExpandableListActivity {
 					// デフォルトのオーディオプレーヤを起動
 					Intent i = new Intent();
 					i.setAction(Intent.ACTION_VIEW);
-					i.setDataAndType(Uri.parse(tv.getAudioUri()), "audio/*");
+					i.setDataAndType(Uri.parse(tv.getAudioUri()), tv.getMediaType());
 					
-					startActivity(i);
+					try {
+						startActivity(i);
+					} catch (ActivityNotFoundException e) {
+						/*
+						 * TODO mp4を独自再生する
+						VideoView video = new VideoView(getApplicationContext());
+						video.setMediaController(new MediaController(getApplicationContext()));
+						video.setVideoURI(Uri.parse(tv.getAudioUri()));
+						video.requestFocus();
+						*/
+						
+						Toast.makeText(getApplicationContext(), R.string.activity_notfound, Toast.LENGTH_SHORT).show();
+						new RoidcatUtil().eLog(e);
+						
+					}
 					
 					/* Musicの再生を手動で実装するならこっちだけど・・・
 					 * 大変なので今回はデフォルトに任せた 
@@ -207,7 +226,7 @@ public class Roidcast extends ExpandableListActivity {
 			Podcast p = (Podcast) getGroup(groupPosition);
 			//CharSequence c =  getResources().getText((R.string.last_publish_date));
             textView.setText(p.getTitle() + "\n" + 
-            		p.getLastBuildDate().toLocaleString());
+            		p.getLastBuildDateLocaleString());
             return textView;
 		}
 		
@@ -237,6 +256,23 @@ public class Roidcast extends ExpandableListActivity {
             t.setPadding(36, 0, 0, 0);
         }
 
+	}
+
+	@Override
+	public void onClick(View v) {
+		
+		// loadData= r.doLoad();
+		
+		for(Podcast p:loadData) {
+			p.reCrawl();
+		}
+		try {
+			RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
+			r.doSave(loadData);
+		} catch (IOException e) {
+			new RoidcatUtil().eLog(e);
+		}
+		doDraw();
 	}
 
 

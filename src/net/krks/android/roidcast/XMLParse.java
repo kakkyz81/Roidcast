@@ -94,7 +94,10 @@ public class XMLParse {
 							case XmlPullParser.START_TAG:
 								if(name.equalsIgnoreCase("title")) {item.setTitle(parser.nextText());}
 								if(name.equalsIgnoreCase("link")) {item.setLink(parser.nextText());}
-								if(name.equalsIgnoreCase("enclosure")) {item.setAudioUri(parser.getAttributeValue(null,"url"));}
+								if(name.equalsIgnoreCase("enclosure")) {
+									item.setAudioUri(parser.getAttributeValue(null,"url"));
+									item.setMediaType(parser.getAttributeValue(null,"type"));
+								}
 								break;
 							case  XmlPullParser.END_TAG:
 								break;
