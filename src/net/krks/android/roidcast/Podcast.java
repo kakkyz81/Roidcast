@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * Podcast情報を持つためのクラス
- * $Id: 1d78a8d6712777388ed32eaf01d9d12f749e6816 $
+ * $Id: 41be0ee00ec7693e255d561fa67a34d6e76d0f91 $
  * @author kakkyz
  * 
  */
@@ -93,8 +93,25 @@ public class Podcast implements Serializable{
 
 	}
 	
-	public String getLastBuildDateLocaleString() {
-		return (lastBuildDate != null) ? lastBuildDate.toLocaleString() : "";
+	/**
+	 * itemの最新のpubDateを返す
+	 * @return localeString or ""
+	 */
+	public String getLatestItemDate() {
+		Date latestDate = null;
+		
+		for(PodcastItem item:items) {
+			Date itemDate = item.getPubDate();
+			if(itemDate == null) { continue; }
+			
+			if(latestDate == null) {
+				latestDate = itemDate;
+			}else if(latestDate.compareTo(itemDate) < 0) {
+				latestDate = itemDate;
+			}
+		}
+		
+		return latestDate != null ? latestDate.toLocaleString() : "";
 	}
 	
 	/**
@@ -110,6 +127,7 @@ public class Podcast implements Serializable{
 		protected String audioUri = null;
 		protected String mediaType = null;
 		protected Date lastPlayedDate = null;
+		protected Date pubDate = null;
 		
 		// 容量が大きくなるし、見せるつもりもないのでコメント情報は持たない
 		// protected String description = null;
@@ -159,7 +177,13 @@ public class Podcast implements Serializable{
 			this.mediaType = mediaType;
 		}
 		
-		
+		public Date getPubDate() {
+			return pubDate;
+		}
+
+		public void setPubDate(Date pubDate) {
+			this.pubDate = pubDate;
+		}
 	}
 
 	public String getTitle() {

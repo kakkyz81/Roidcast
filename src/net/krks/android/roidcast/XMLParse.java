@@ -98,6 +98,13 @@ public class XMLParse {
 									item.setAudioUri(parser.getAttributeValue(null,"url"));
 									item.setMediaType(parser.getAttributeValue(null,"type"));
 								}
+								if(name.equalsIgnoreCase("pubDate")) {
+									try {
+										item.setPubDate(new Date(Date.parse(parser.nextText())));
+									} catch (Exception e) {
+										item.setPubDate(null);
+									}
+								}
 								break;
 							case  XmlPullParser.END_TAG:
 								break;

@@ -268,7 +268,7 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 			Podcast p = (Podcast) getGroup(groupPosition);
 			//CharSequence c =  getResources().getText((R.string.last_publish_date));
             textView.setText(p.getTitle() + "\n" + 
-            		p.getLastBuildDateLocaleString());
+            		p.getLatestItemDate());
             return textView;
 		}
 		
