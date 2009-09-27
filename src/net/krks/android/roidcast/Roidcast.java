@@ -5,23 +5,29 @@ import java.util.ArrayList;
 
 import net.krks.android.roidcast.Podcast.PodcastItem;
 import net.krks.android.roidcast.R.layout;
+import net.krks.android.roidcast.R.string;
 import android.app.ExpandableListActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 
 @SuppressWarnings("unused")
 public class Roidcast extends ExpandableListActivity  implements View.OnClickListener{
@@ -76,6 +82,42 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
         registerForContextMenu(getExpandableListView());
         
 	}
+	
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		menu.setHeaderTitle(R.string.roidcast_context_menu_header);
+		menu.add(0, 0, 0, R.string.roidcast_context_menu_delete);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		super.onContextItemSelected(item);
+		ExpandableListContextMenuInfo menuinfo = (ExpandableListContextMenuInfo)item.getMenuInfo();
+		
+		int type = ExpandableListView.getPackedPositionType(menuinfo.packedPosition);
+		if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+			// 親要素の時だけ処理する
+			int groupPosition = ExpandableListView.getPackedPositionGroup(menuinfo.packedPosition);
+			Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
+			String title = podcast.getTitle();
+			loadData.remove(groupPosition);
+			try {
+				doSave();
+			} catch (IOException e) {
+				new RoidcatUtil().eLog(e);
+			}
+			doDraw();
+			Toast.makeText(getApplicationContext()
+					, title + " " + getString(R.string.roidcast_context_menu_delete_done)
+					, Toast.LENGTH_SHORT).show();
+		}
+		
+		return true;
+	}
+
 	/*
 	protected class RoidcastClickLisner implements OnClickListener{
     	@Override
