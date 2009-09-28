@@ -2,21 +2,18 @@ package net.krks.android.roidcast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import net.krks.android.roidcast.Podcast.PodcastItem;
-import net.krks.android.roidcast.R.layout;
-import net.krks.android.roidcast.R.string;
 import android.app.ExpandableListActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +23,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 
 @SuppressWarnings("unused")
@@ -161,6 +156,9 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 			i.setAction(Intent.ACTION_VIEW);
 			i.setDataAndType(Uri.parse(rv.getAudioUri()), rv.getMediaType());
 			try {
+				// 最後に再生した時間を保存する
+				loadData.get(groupPosition).getItems().get(childPosition).setLastPlayedDate(new Date());
+				doSave();
 				startActivity(i);
 			} catch (ActivityNotFoundException e) {
 				/*
@@ -172,6 +170,8 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 				*/
 				
 				Toast.makeText(getApplicationContext(), R.string.activity_notfound, Toast.LENGTH_SHORT).show();
+				new RoidcatUtil().eLog(e);
+			} catch (IOException e) {
 				new RoidcatUtil().eLog(e);
 			}
 			return true;
@@ -218,7 +218,12 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
             textView.setText(podcatItem.getTitle());
 			textView.setAudioUri(podcatItem.getAudioUri());
 			textView.setMediaType(podcatItem.getMediaType());
-
+			// 再生していないものは色変更
+			if(null == podcatItem.getLastPlayedDate()) {
+				textView.setTextColor(Color.CYAN);
+			}
+				
+			
 			return textView;
 		}
 		
@@ -253,6 +258,18 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 			//CharSequence c =  getResources().getText((R.string.last_publish_date));
             textView.setText(p.getTitle() + "\n" + 
             		p.getLatestItemDate());
+            
+            // 子要素に、再生していないものがあれば色を変更する
+            Podcast podcast = (Podcast)getGroup(groupPosition);
+            boolean hasNotPlayItem = false;
+            for(PodcastItem item:podcast.getItems()) {
+            	if(item.getLastPlayedDate() == null) {
+            		hasNotPlayItem = true;
+            	}
+            }
+            if(hasNotPlayItem) {
+            	textView.setTextColor(Color.CYAN);
+            }
             return textView;
 		}
 		
@@ -271,14 +288,11 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		 * TextViewのプロパティ値を設定する。（親要素、子要素共通）
 		 */
         protected void setTextViewParams(TextView t) {
-            // Layout parameters for the ExpandableListView
             AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
                     ViewGroup.LayoutParams.FILL_PARENT, 64);
 
             t.setLayoutParams(lp);
-            // Center the text vertically
             t.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-            // Set the text starting position
             t.setPadding(36, 0, 0, 0);
         }
 

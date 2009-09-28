@@ -4,7 +4,6 @@ import android.content.Context;
 import android.widget.TextView;
 
 public class RoidcastTextView extends TextView {
-
 	protected String AudioUri = null;
 	protected String MediaType = null;
 	
