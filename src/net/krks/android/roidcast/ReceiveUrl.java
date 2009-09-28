@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * ブラウザなどから呼び出されて、URLを保存するためのクラス
@@ -42,8 +43,12 @@ public class ReceiveUrl extends Activity {
 	    	Intent nextIntent = new Intent(getApplicationContext(),Roidcast.class);
 	    	startActivity(nextIntent);
     	} else {
-    		// パースできなかった場合、メッセージを出力する
+    		// パースできなかった場合、メッセージを出力して終了する
     		Log.i(Roidcast.TAG,"ParseError");
+    		Toast.makeText(getApplicationContext()
+    				, getString(R.string.reciveurl_could_not_parse)
+					, Toast.LENGTH_SHORT).show();
+    		finish();
     	}
         
     }
