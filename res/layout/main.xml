@@ -10,7 +10,7 @@
 <Button android:text="Recrawl" android:id="@+id/RecrawlButton"
  android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
 
-<ExpandableListView android:layout_width="wrap_content" android:layout_height="wrap_content" 
+<ExpandableListView android:layout_width="fill_parent" android:layout_height="wrap_content" 
   android:id="@id/android:list"></ExpandableListView>
 
 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" 
