@@ -1,19 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
 
-<Button android:text="Recrawl" android:id="@+id/RecrawlButton"
- android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
-
-<ExpandableListView android:layout_width="fill_parent" android:layout_height="wrap_content" 
-  android:id="@id/android:list"></ExpandableListView>
-
-<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" 
-  android:id="@id/android:empty" android:text="No data" />
-
+<ImageView android:layout_width="wrap_content"
+	 android:layout_height="wrap_content" android:src="@drawable/roidcast_title" android:layout_x="3px" android:layout_y="2px" android:id="@+id/TitleImageView"></ImageView>
+	
+<TextView
+	android:layout_height="wrap_content"
+	android:layout_x="2px" android:layout_y="26px" android:id="@+id/TitleTextVie" android:text="@string/roidcast_title_const" android:layout_width="fill_parent"></TextView>
+<LinearLayout
+android:layout_height="wrap_content"
+android:layout_width="fill_parent" 
+android:id="@+id/LinearLayout01"
+android:layout_x="0px"
+android:layout_y="0px"
+android:orientation="vertical" android:padding="0px">
+	 
+	 <ImageButton
+	android:id="@+id/RecrawlButton"
+	android:layout_height="wrap_content"
+	android:src="@android:drawable/ic_menu_rotate"
+	android:adjustViewBounds="true"
+	android:layout_width="wrap_content"
+	android:layout_gravity="right" android:padding="5px" android:layout_marginTop="2px" android:layout_marginBottom="1px"></ImageButton>
+	<ExpandableListView
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:id="@id/android:list"></ExpandableListView>
+	<TextView
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:id="@id/android:empty"
+	android:text="No data"
+	/>
 </LinearLayout>
+
+
+
+  
+  
+
+
+
+
+</AbsoluteLayout>

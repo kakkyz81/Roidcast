@@ -11,5 +11,5 @@
 	<string name="roidcast_context_menu_delete_done"> deleted.</string>
 	
 	<string name="reciveurl_could_not_parse">could not parse this page.\n(is not podcast xml???)</string>
-	<string name="roidcast_title_const">Listen podcast outside with Roidcast.\nIt\'s very valuable.</string>
+	<string name="roidcast_title_const">外へ出よう。podcastを聴こう。\nそれはとても気持ちのいいことだろう。</string>
 </resources>

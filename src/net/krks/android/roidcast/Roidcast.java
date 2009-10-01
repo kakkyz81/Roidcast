@@ -23,6 +23,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
@@ -41,9 +42,11 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        Button b = (Button)findViewById(R.id.RecrawlButton);
+        ImageButton b = (ImageButton)findViewById(R.id.RecrawlButton);
         //RoidcastClickLisner roidcastClickLisner = new RoidcastClickLisner();
         b.setOnClickListener(this);
+        
+        registerForContextMenu(getExpandableListView());
         
         // TODO 起動時に自動でrecrawlする(すべきでないのでは？と考えとりあえず実装しない)
         //loadData = doLoad();
@@ -77,7 +80,7 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
         mAdapter = roidcastEVLAdapter;
         setListAdapter(mAdapter);
       //!?
-        registerForContextMenu(getExpandableListView());
+       // registerForContextMenu(getExpandableListView());
         
 	}
 	
