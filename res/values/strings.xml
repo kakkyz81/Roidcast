@@ -6,6 +6,7 @@
 	<string name="activity_notfound">can't play this podcast for this machine.</string>
 	<string name="roidcast_context_menu_header">Roidcast menu</string>
 	<string name="roidcast_context_menu_delete">delete</string>
+	<string name="roidcast_context_menu_delete_do"> delete?</string>
 	<string name="roidcast_context_menu_delete_done"> deleted.</string>
 	<string name="roidcast_context_menu_up">up</string>
 	<string name="roidcast_context_menu_down">down</string>

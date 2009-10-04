@@ -6,7 +6,10 @@
 	<string name="activity_notfound">ごめんなさい。\nこの機種では再生できないみたいです。</string>
 	<!--   string name="roidcast_context_menu_header">roidcast menu</string> -->
 	<string name="roidcast_context_menu_delete">削除</string>
+	<string name="roidcast_context_menu_delete_do">を削除しますか？</string>
 	<string name="roidcast_context_menu_delete_done">を削除しました</string>
+	<string name="roidcast_context_menu_up">一つ上へ</string>
+	<string name="roidcast_context_menu_down">一つ下へ</string>
 	
 	<string name="reciveurl_could_not_parse">解析に失敗しました\n(本当にpodcast用rssデータですか???)</string>
 	<string name="roidcast_title_const">外へ出よう。podcastを聴こう。\nそれはとても気持ちのいいことだろう。</string>

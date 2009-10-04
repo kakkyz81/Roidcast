@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import net.krks.android.roidcast.Podcast.PodcastItem;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -75,15 +78,14 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 	}
 	
 	protected void doDraw() {
-		//RoidcastEVLAdapter roidcastEVLAdapter = new RoidcastEVLAdapter(getApplicationContext());
         RoidcastEVLAdapter roidcastEVLAdapter = new RoidcastEVLAdapter();
         roidcastEVLAdapter.setPodcastList(loadData);
         
         // ExpandListViewを登録する時のお決まりの文法
         mAdapter = roidcastEVLAdapter;
         setListAdapter(mAdapter);
-      //!?
-       // registerForContextMenu(getExpandableListView());
+      // ?
+      // registerForContextMenu(getExpandableListView());
         
 	}
 	
@@ -135,47 +137,8 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		
 		doDraw();
 		
-		//String dummy = new String();
-			// super.onContextItemSelected(item);
-			// 親要素の時だけ処理する
-/*			int groupPosition = ExpandableListView.getPackedPositionGroup(menuinfo.packedPosition);
-			Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
-			String title = podcast.getTitle();
-			loadData.remove(groupPosition);
-			try {
-				doSave();
-			} catch (IOException e) {
-				new RoidcatUtil().eLog(e);
-			}
-			
-			doDraw();
-			Toast.makeText(getApplicationContext()
-					, title + " " + getString(R.string.roidcast_context_menu_delete_done)
-					, Toast.LENGTH_SHORT).show();
-*/
-		
 		return true;
 	}
-
-	/*
-	protected class RoidcastClickLisner implements OnClickListener{
-    	@Override
-    	public void onClick(View v) {
-    		RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
-    		loadData= r.doLoad();
-    		
-    		for(Podcast p:loadData) {
-    			p.reCrawl();
-    		}
-    		try {
-				r.doSave(loadData);
-			} catch (IOException e) {
-				new RoidcatUtil().eLog(e);
-			}
-			
-    	}
-    }
-    */
 	
 	/**
 	 * 選択された要素を１つ下げる
@@ -225,21 +188,82 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		loadData.add(groupPosition - 1,podcast);
 		
 	}
-
-	private void doDeleteChild(int groupPosition, int childPosition) {
-		// TODO Auto-generated method stub
+	
+	/**
+	 * podcastの1話を削除する
+	 * @param groupPosition
+	 * @param childPosition
+	 */
+	private void doDeleteChild(int groupPosition,final int childPosition) {
+		Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
+		final ArrayList<PodcastItem> items  = podcast.getItems();
+		PodcastItem moveItem = items.get(childPosition);
+		final String title = moveItem.getTitle();
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		
+		builder.setMessage(title + getText(R.string.roidcast_context_menu_delete_do));
+		
+		builder.setCancelable(true);
+		builder.setPositiveButton(getText(android.R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				items.remove(childPosition);
+				Toast.makeText(getApplicationContext()
+						, title + " " + getString(R.string.roidcast_context_menu_delete_done)
+						, Toast.LENGTH_LONG).show();
+				doDraw(); // 再描画
+			}
+		});
+		builder.setNegativeButton(getText(android.R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// nothing to do
+				;
+			}
+		});
+		
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
 		
 	}
-
-	private void doDeleteGroup(int groupPosition) {
-		// TODO Auto-generated method stub
+	/**
+	 * podcastを削除する
+	 * @param groupPosition
+	 */
+	private void doDeleteGroup(final int groupPosition) {
 		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		final String title = loadData.get(groupPosition).getTitle();
+		
+		builder.setMessage(title + getText(R.string.roidcast_context_menu_delete_do));
+		
+		builder.setCancelable(true);
+		builder.setPositiveButton(getText(android.R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				loadData.remove(groupPosition);
+				Toast.makeText(getApplicationContext()
+						, title + " " + getString(R.string.roidcast_context_menu_delete_done)
+						, Toast.LENGTH_LONG).show();
+				doDraw(); //再描画
+			}
+		});
+		builder.setNegativeButton(getText(android.R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// nothing to do
+				;
+			}
+		});
+		
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 
-	public void doSave() throws IOException{
-    	RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
-    	r.doSave(loadData);
-	}
+
     
     /**
      * 子要素をタップまたはカーソルで選んでトラックボールのボタンを押したとき
@@ -277,7 +301,11 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		return false;
 		//return super.onChildClick(parent, v, groupPosition, childPosition, id);
 	}
-
+	
+	public void doSave() throws IOException{
+    	RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
+    	r.doSave(loadData);
+	}
 	public ArrayList<Podcast> doLoad(){
 		RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
     	return r.doLoad();
@@ -429,9 +457,6 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 			};
 			t.start();
 		}
-		
-		
-		
 	}
 	
 	/**
@@ -450,5 +475,4 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		}
 		doDraw();
 	}
-	
 }
