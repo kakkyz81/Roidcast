@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Roidcast!</string>
     <string name="app_name">Roidcast</string>
 	<string name="empty_message">empty</string>
 	
-	<string name="last_publish_date">LastPublished at </string>
 	<string name="activity_notfound">can't play this podcast for this machine.</string>
-	<string name="roidcast_context_menu_header">roidcast menu</string>
+	<string name="roidcast_context_menu_header">Roidcast menu</string>
 	<string name="roidcast_context_menu_delete">delete</string>
 	<string name="roidcast_context_menu_delete_done"> deleted.</string>
+	<string name="roidcast_context_menu_up">up</string>
+	<string name="roidcast_context_menu_down">down</string>
 	
-	<string name="reciveurl_could_not_parse">could not parse this page.\n(is not podcast xml???)</string>
+	
+	
+	<string name="reciveurl_could_not_parse">could not parse this page.\n(is not podcast rss???)</string>
+	
 	<string name="roidcast_title_const">Listen podcast outside with Roidcast.\nIt\'s very valuable.</string>
+	<string name="roidcast_progress_message">Loading...  </string>
 </resources>

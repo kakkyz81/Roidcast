@@ -6,14 +6,17 @@ import java.util.Date;
 
 import net.krks.android.roidcast.Podcast.PodcastItem;
 import android.app.ExpandableListActivity;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,12 +69,12 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 	protected void onStart() {
 		// TODO Auto-generated method stub
 		super.onStart();
-		    
+		loadData = doLoad();
+		
         doDraw();
 	}
 	
 	protected void doDraw() {
-		loadData = doLoad();
 		//RoidcastEVLAdapter roidcastEVLAdapter = new RoidcastEVLAdapter(getApplicationContext());
         RoidcastEVLAdapter roidcastEVLAdapter = new RoidcastEVLAdapter();
         roidcastEVLAdapter.setPodcastList(loadData);
@@ -84,13 +87,18 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
         
 	}
 	
+	int MENU_ITEM_DELETE = 0;
+	int MENU_ITEM_UP = 1;
+	int MENU_ITEM_DOWN = 2;
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		menu.setHeaderTitle(R.string.roidcast_context_menu_header);
-		menu.add(0, 0, 0, R.string.roidcast_context_menu_delete);
+		menu.add(Menu.NONE, MENU_ITEM_DELETE , MENU_ITEM_DELETE, R.string.roidcast_context_menu_delete);
+		menu.add(Menu.NONE, MENU_ITEM_UP , MENU_ITEM_UP, R.string.roidcast_context_menu_up);
+		menu.add(Menu.NONE, MENU_ITEM_DOWN , MENU_ITEM_DOWN, R.string.roidcast_context_menu_down);
 	}
 	
 	@Override
@@ -98,11 +106,39 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		
 		ExpandableListContextMenuInfo menuinfo = (ExpandableListContextMenuInfo)item.getMenuInfo();
 		
+		int menuid = item.getItemId();
+		// int groupid = item.getGroupId(); //menuはgroup化していないので使用しない
+		
 		int type = ExpandableListView.getPackedPositionType(menuinfo.packedPosition);
-		if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+		int groupPosition = ExpandableListView.getPackedPositionGroup(menuinfo.packedPosition);
+		int childPosition = ExpandableListView.getPackedPositionChild(menuinfo.packedPosition);
+		
+		if(MENU_ITEM_DELETE == menuid){
+			if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+				doDeleteGroup(groupPosition);
+			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+				doDeleteChild(groupPosition,childPosition);
+			}	
+		}else if(MENU_ITEM_UP == menuid) {
+			if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+				doUpGroup(groupPosition);
+			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+				doUpChild(groupPosition,childPosition);
+			}
+		}else if(MENU_ITEM_DOWN == menuid) {
+			if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+				doDownGroup(groupPosition);
+			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+				doDownChild(groupPosition,childPosition);
+			}
+		}
+		
+		doDraw();
+		
+		//String dummy = new String();
 			// super.onContextItemSelected(item);
 			// 親要素の時だけ処理する
-			int groupPosition = ExpandableListView.getPackedPositionGroup(menuinfo.packedPosition);
+/*			int groupPosition = ExpandableListView.getPackedPositionGroup(menuinfo.packedPosition);
 			Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
 			String title = podcast.getTitle();
 			loadData.remove(groupPosition);
@@ -111,11 +147,12 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 			} catch (IOException e) {
 				new RoidcatUtil().eLog(e);
 			}
+			
 			doDraw();
 			Toast.makeText(getApplicationContext()
 					, title + " " + getString(R.string.roidcast_context_menu_delete_done)
 					, Toast.LENGTH_SHORT).show();
-		}
+*/
 		
 		return true;
 	}
@@ -140,8 +177,66 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
     }
     */
 	
-	
-    public void doSave() throws IOException{
+	/**
+	 * 選択された要素を１つ下げる
+	 * 
+	 */
+    private void doDownChild(int groupPosition, int childPosition) {
+		Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
+		ArrayList<PodcastItem> items  = podcast.getItems();
+		PodcastItem moveItem = items.get(childPosition);
+		
+		if((items.size() -1 ) <= childPosition) { return;}
+		
+		items.remove(childPosition);
+		items.add(childPosition + 1,moveItem);
+	}
+    
+    /**
+     * 選択された要素を１つ下げる
+     * @param groupPosition
+     */
+	private void doDownGroup(int groupPosition) {
+		Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
+		
+		if((loadData.size() -1 ) <= groupPosition) { return;}				
+		
+		loadData.remove(groupPosition);
+		loadData.add(groupPosition + 1,podcast);
+	}
+
+	private void doUpChild(int groupPosition, int childPosition) {
+		Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
+		ArrayList<PodcastItem> items  = podcast.getItems();
+		PodcastItem moveItem = items.get(childPosition);
+		
+		if(0 == childPosition) { return;}
+		
+		items.remove(childPosition);
+		items.add(childPosition - 1,moveItem);
+	}
+
+	private void doUpGroup(int groupPosition) {
+		Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
+		
+		if(0 == groupPosition) { return;}
+		
+		loadData.remove(groupPosition);
+		loadData.add(groupPosition - 1,podcast);
+		
+	}
+
+	private void doDeleteChild(int groupPosition, int childPosition) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void doDeleteGroup(int groupPosition) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void doSave() throws IOException{
     	RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
     	r.doSave(loadData);
 	}
@@ -300,24 +395,60 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
         }
 
 	}
-
+	
+	private ProgressDialog loadingDialog;
+	
 	@Override
 	public void onClick(View v) {
+		ProgressDialog progressDialog = new ProgressDialog(this);
 		
-		// loadData= r.doLoad();
-		
-		for(Podcast p:loadData) {
-			p.reCrawl();
+		// 再読み込み処理
+		if(v.getId() == R.id.RecrawlButton) {
+			String message = "now loading...";
+			loadingDialog = new ProgressDialog(this);
+			
+			loadingDialog.setMessage(getText(R.string.roidcast_progress_message));
+			loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			loadingDialog.show();
+			
+			final Handler handler = new Handler();
+			final Runnable returnMethod = new Runnable() {				
+				@Override
+				public void run() {
+					doReclawlThreadEnded();
+				}
+			};
+			
+			Thread t = new Thread() {
+				public void run() {
+					for(Podcast p:loadData){
+						p.reCrawl();
+					}
+					handler.post(returnMethod);
+				}
+			};
+			t.start();
 		}
+		
+		
+		
+	}
+	
+	/**
+	 * 再読み込みが終わった後（プログレスダイアログを閉じる）
+	 */
+	public void doReclawlThreadEnded() {
+		// ダイアログを閉じる
+		loadingDialog.dismiss();
+		
+		// 再読み込みしたデータの保存
+		RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
 		try {
-			RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
 			r.doSave(loadData);
 		} catch (IOException e) {
 			new RoidcatUtil().eLog(e);
 		}
 		doDraw();
 	}
-	
-
 	
 }
