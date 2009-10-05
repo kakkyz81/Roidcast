@@ -53,7 +53,9 @@ public class RoidcastFileIo extends ContextWrapper {
     	try {
 			in = new ObjectInputStream(openFileInput(FILE_ID));
 			ArrayList<Podcast> readObject = (ArrayList<Podcast>)in.readObject();
-			array = readObject;
+			if(null != readObject) {
+				array = readObject;
+			}
 		} catch (FileNotFoundException e) {
 			// 初回の場合、空のArrayListを返す
 			new RoidcatUtil().eLog(e);

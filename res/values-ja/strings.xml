@@ -8,6 +8,7 @@
 	<string name="roidcast_context_menu_delete">削除</string>
 	<string name="roidcast_context_menu_delete_do">を削除しますか？</string>
 	<string name="roidcast_context_menu_delete_done">を削除しました</string>
+	<string name="roidcast_context_menu_change_name">名前の変更</string>
 	<string name="roidcast_context_menu_up">一つ上へ</string>
 	<string name="roidcast_context_menu_down">一つ下へ</string>
 	

@@ -57,10 +57,18 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 	
 	ArrayList<Podcast> loadData;
 	
-    /** Called when the activity is first created. */
+    public ArrayList<Podcast> getLoadData() {
+		return loadData;
+	}
+
+	public void setLoadData(ArrayList<Podcast> loadData) {
+		this.loadData = loadData;
+	}
+
+	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState){
-    	Log.i(TAG,"onCreate @@@ roidast");
+    	Log.d(TAG,"onCreate @@@ roidast");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
@@ -380,8 +388,6 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		dialog.show();
 	}
 
-
-    
     /**
      * 子要素をタップまたはカーソルで選んでトラックボールのボタンを押したとき
      */
@@ -416,7 +422,6 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 			return true;
 		}
 		return false;
-		//return super.onChildClick(parent, v, groupPosition, childPosition, id);
 	}
 	
 	public void doSave() throws IOException{
@@ -465,7 +470,6 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 			if(null == podcatItem.getLastPlayedDate()) {
 				textView.setTextColor(Color.CYAN);
 			}
-				
 			
 			return textView;
 		}
@@ -584,9 +588,8 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		loadingDialog.dismiss();
 		
 		// 再読み込みしたデータの保存
-		RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
 		try {
-			r.doSave(loadData);
+			doSave();
 		} catch (IOException e) {
 			new RoidcatUtil().eLog(e);
 		}

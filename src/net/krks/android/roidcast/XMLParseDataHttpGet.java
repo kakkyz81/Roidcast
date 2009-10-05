@@ -39,7 +39,7 @@ public class XMLParseDataHttpGet extends DefaultHttpClient{
 	 * @return InputStream
 	 */
 	public InputStream getImputStreamOnWeb(String uri){
-		Log.i(Roidcast.TAG, "getImputStreamOnWeb:" + uri);
+		Log.d(Roidcast.TAG, "getImputStreamOnWeb:" + uri);
 		
 		try {
 			httpGet.setURI(new URI(uri));
@@ -53,7 +53,7 @@ public class XMLParseDataHttpGet extends DefaultHttpClient{
 		try {
 			response = execute(httpGet);
 			int statusCode = response.getStatusLine().getStatusCode();
-			Log.i(Roidcast.TAG, "statusCode:" + statusCode);
+			Log.d(Roidcast.TAG, "statusCode:" + statusCode);
 			// success
 			if ( HttpStatus.SC_OK != statusCode) {
 				throw new IOException();

@@ -44,7 +44,7 @@ public class XMLParse {
 	 * @return Podcast 
 	 */
 	public Podcast parsePodcastXML(String uri){
-		Log.i(Roidcast.TAG, "parsePodcastXML:" + uri);
+		Log.d(Roidcast.TAG, "parsePodcastXML:" + uri);
 		XMLParseDataHttpGet xmlParceDataHttpGet = new XMLParseDataHttpGet();
 		InputStream in = xmlParceDataHttpGet.getImputStreamOnWeb(uri);
 		Podcast p = new Podcast();
@@ -160,13 +160,5 @@ public class XMLParse {
 		if(p.isEmpty()) {p = null;}
 		
 		return p;
-	}
-	
-	/**
-	 * コンストラクタ
-	 */
-	public XMLParse() {
-		Log.i(Roidcast.TAG, "XMLParse:");
-		
 	}
 }

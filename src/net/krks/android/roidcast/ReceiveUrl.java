@@ -42,7 +42,7 @@ public class ReceiveUrl extends Activity {
     	Intent intent = getIntent();
     	String uri = intent.getStringExtra(Intent.EXTRA_TEXT);
     	
-    	Log.i(Roidcast.TAG,"onCreate @@@ roidast" + uri);
+    	Log.d(Roidcast.TAG,"onCreate @@@ roidast" + uri);
     	
     	// uriをパースしてpodcastオブジェクトにする
     	Podcast podcast = null;
