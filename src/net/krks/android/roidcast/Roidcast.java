@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import net.krks.android.roidcast.Podcast.PodcastItem;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
@@ -40,9 +39,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -105,15 +105,18 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
         
 	}
 	
-	int MENU_ITEM_DELETE = 0;
-	int MENU_ITEM_UP = 1;
-	int MENU_ITEM_DOWN = 2;
+	
+	final int MENU_ITME_NAME_CHANGE = 0;
+	final int MENU_ITEM_DELETE = 1;
+	final int MENU_ITEM_UP = 2;
+	final int MENU_ITEM_DOWN = 3;
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		menu.setHeaderTitle(R.string.roidcast_context_menu_header);
+		menu.add(Menu.NONE, MENU_ITME_NAME_CHANGE , MENU_ITME_NAME_CHANGE, R.string.roidcast_context_menu_change_name);
 		menu.add(Menu.NONE, MENU_ITEM_DELETE , MENU_ITEM_DELETE, R.string.roidcast_context_menu_delete);
 		menu.add(Menu.NONE, MENU_ITEM_UP , MENU_ITEM_UP, R.string.roidcast_context_menu_up);
 		menu.add(Menu.NONE, MENU_ITEM_DOWN , MENU_ITEM_DOWN, R.string.roidcast_context_menu_down);
@@ -149,6 +152,12 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
 				doDownChild(groupPosition,childPosition);
 			}
+		}else if(MENU_ITME_NAME_CHANGE == menuid) {
+			if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+				doNameChengeGroup(groupPosition);
+			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+				doNameChengeChild(groupPosition,childPosition);
+			}
 		}
 		
 		doDraw();
@@ -156,6 +165,98 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		return true;
 	}
 	
+	/**
+	 * 選択された要素の名前を変更する
+	 * @param groupPosition
+	 * @param childPosition
+	 */
+	private void doNameChengeChild(final int groupPosition,final int childPosition) {
+		Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
+		ArrayList<PodcastItem> items  = podcast.getItems();
+		final PodcastItem nameChangeItem = items.get(childPosition);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		
+		final String title = nameChangeItem.getTitle();
+		
+		builder.setMessage(getText(R.string.roidcast_context_menu_change_name));
+		
+		builder.setCancelable(true);
+		builder.setTitle(title);
+		final EditText changedNameView = new EditText(this);
+		changedNameView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		
+		builder.setView(changedNameView);
+		builder.setPositiveButton(getText(android.R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String newTitle = changedNameView.getText().toString();
+				if(null != newTitle && !"".equals(newTitle)) {
+					nameChangeItem.setTitle(newTitle);
+				}
+//				Toast.makeText(getApplicationContext()
+//						, title + " " + getString(R.string.roidcast_context_menu_delete_done)
+//						, Toast.LENGTH_LONG).show();
+				doDraw(); // 再描画
+			}
+		});
+		
+		builder.setNegativeButton(getText(android.R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// nothing to do
+				;
+			}
+		});
+		
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
+	/**
+	 * 選択された要素の名前を変更する
+	 * @param groupPosition
+	 */
+	private void doNameChengeGroup(final int groupPosition) {
+		Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
+		final String title = podcast.getTitle();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		
+		// TODO message
+		builder.setMessage(getText(R.string.roidcast_context_menu_change_name));
+		
+		builder.setCancelable(true);
+		builder.setTitle(title);
+		final EditText changedNameView = new EditText(this);
+		changedNameView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		
+		builder.setView(changedNameView);
+		builder.setPositiveButton(getText(android.R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String newTitle = changedNameView.getText().toString();
+				if(null != newTitle && !"".equals(newTitle)) {
+					loadData.get(groupPosition).setTitle(newTitle);
+				}
+//				Toast.makeText(getApplicationContext()
+//						, title + " " + getString(R.string.roidcast_context_menu_delete_done)
+//						, Toast.LENGTH_LONG).show();
+				doDraw(); // 再描画
+			}
+		});
+		
+		builder.setNegativeButton(getText(android.R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// nothing to do
+				;
+			}
+		});
+		
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
+
 	/**
 	 * 選択された要素を１つ下げる
 	 * 

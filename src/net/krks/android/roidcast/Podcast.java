@@ -92,7 +92,7 @@ public class Podcast implements Serializable{
 		}
 		items = tmpItems;
 	
-		title         = newPodcast.getTitle();
+		// title         = newPodcast.getTitle(); // titleは人が変更できるので，初回のものを常に採用する
 		link          = newPodcast.getLink();
 		description   = newPodcast.getDescription();
 		language      = newPodcast.getLanguage();
@@ -103,7 +103,6 @@ public class Podcast implements Serializable{
 		categories    = newPodcast.getCategories();
 		lastBuildDate = newPodcast.getLastBuildDate();
 		//xmlUrl      = newPodcast.get//xmlUrl     ();
-
 	}
 	
 	/**
