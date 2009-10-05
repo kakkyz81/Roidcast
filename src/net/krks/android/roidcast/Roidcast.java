@@ -553,7 +553,6 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		
 		// 再読み込み処理
 		if(v.getId() == R.id.RecrawlButton) {
-			String message = "now loading...";
 			loadingDialog = new ProgressDialog(this);
 			
 			loadingDialog.setMessage(getText(R.string.roidcast_progress_message));

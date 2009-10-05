@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,37 +35,59 @@ import android.widget.Toast;
  *
  */
 public class ReceiveUrl extends Activity {
+	private ProgressDialog loadingDialog;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	
     	// メッセージとして受けたuriを取り出す
-    	Intent intent = getIntent();
-    	String uri = intent.getStringExtra(Intent.EXTRA_TEXT);
+    	final Intent intent = getIntent();
+    	final String uri = intent.getStringExtra(Intent.EXTRA_TEXT);
     	
     	Log.d(Roidcast.TAG,"onCreate @@@ roidast" + uri);
     	
-    	// uriをパースしてpodcastオブジェクトにする
-    	Podcast podcast = null;
-    	XMLParse xmlParse = new XMLParse();
-    	podcast = xmlParse.parsePodcastXML(uri);
-    	
-    	if(podcast != null) {
-        	// パース結果を保存する
-	    	savePodcast(podcast);
-	    	// 次のActivity（メイン画面）を呼び出す
-	    	Intent nextIntent = new Intent(getApplicationContext(),Roidcast.class);
-	    	startActivity(nextIntent);
-    	} else {
-    		// パースできなかった場合、メッセージを出力して終了する
-    		Log.i(Roidcast.TAG,"ParseError");
-    		Toast.makeText(getApplicationContext()
-    				, getString(R.string.reciveurl_could_not_parse)
-					, Toast.LENGTH_SHORT).show();
-    		finish();
-    	}
-        
+    	// loadingのダイアログを出す
+		loadingDialog = new ProgressDialog(this);
+		
+		loadingDialog.setMessage(getText(R.string.roidcast_progress_message));
+		loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		loadingDialog.show();
+		
+		final Handler handler = new Handler();
+		final Runnable returnMethod = new Runnable() {				
+			@Override
+			public void run() {
+				loadingDialog.dismiss();
+			}
+		};
+		
+		Thread t = new Thread() {
+			public void run() {
+				// uriをパースしてpodcastオブジェクトにする
+		    	Podcast podcast = null;
+		    	XMLParse xmlParse = new XMLParse();
+		    	podcast = xmlParse.parsePodcastXML(uri);
+		    	
+		    	if(podcast != null) {
+		        	// パース結果を保存する
+			    	savePodcast(podcast);
+			    	// 次のActivity（メイン画面）を呼び出す
+			    	Intent nextIntent = new Intent(getApplicationContext(),Roidcast.class);
+			    	startActivity(nextIntent);
+		    	} else {
+		    		// パースできなかった場合、メッセージを出力して終了する
+		    		Log.i(Roidcast.TAG,"ParseError");
+		    		Toast.makeText(getApplicationContext()
+		    				, getString(R.string.reciveurl_could_not_parse)
+							, Toast.LENGTH_SHORT).show();
+		    	}
+				handler.post(returnMethod);
+				finish(); // このactivityは画面表示がないので，backボタンを押したときに何もない画面に戻るのを防止するため，正常時もfinishをコールする。
+			}
+		};
+		t.start();
     }
     
     /**
