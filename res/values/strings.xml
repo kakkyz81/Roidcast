@@ -12,6 +12,19 @@
 	<string name="roidcast_context_menu_up">up</string>
 	<string name="roidcast_context_menu_down">down</string>
 	
+	<string name="roidcast_menu_about">about</string>
+	<string name="roidcast_menu_about_info">
+	Play podcast with your android.\n
+	\n
+	see more info \n
+	http://krks.net/android/roidcast/index.php \n
+	
+	</string>
+	
+	<string name="roidcast_menu_howtouse">howtouse</string>
+	
+	<string name="roidcast_url_about">http://krks.net/android/roidcast/index.php</string>
+	<string name="roidcast_url_howtouse">http://krks.net/android/roidcast/howtouse1.php</string>
 	
 	
 	<string name="reciveurl_could_not_parse">could not parse this page.\n(is not podcast rss???)</string>

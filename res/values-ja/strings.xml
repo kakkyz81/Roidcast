@@ -11,9 +11,25 @@
 	<string name="roidcast_context_menu_change_name">名前の変更</string>
 	<string name="roidcast_context_menu_up">一つ上へ</string>
 	<string name="roidcast_context_menu_down">一つ下へ</string>
+
+	<string name="roidcast_menu_about">情報</string>
+	<string name="roidcast_menu_about_info">
+	podcastをandroidで再生\n
+	\n
+	より詳しい情報は Webページで。\n
+	http://krks.net/android/roidcast/index.ja.php \n
+	
+	</string>
+	
+	<string name="roidcast_menu_howtouse">使い方</string>
+	
+	
+	<string name="roidcast_url_about">http://krks.net/android/roidcast/index.ja.php</string>
+	<string name="roidcast_url_howtouse">http://krks.net/android/roidcast/howtouse1.ja.php</string>
+	
 	
 	<string name="reciveurl_could_not_parse">解析に失敗しました\n(本当にpodcast用rssデータですか???)</string>
-	<string name="roidcast_title_const">外へ出よう。podcastを聴こう。\nそれはとても気持ちのいいことだろう。</string>
+	<string name="roidcast_title_const">ケータイでpodcastを「楽」に\n使うための便利ツール。</string>
 	
 		<string name="roidcast_progress_message">Loading...  </string>
 </resources>

@@ -31,6 +31,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
@@ -114,20 +116,20 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 	}
 	
 	
-	final int MENU_ITME_NAME_CHANGE = 0;
-	final int MENU_ITEM_DELETE = 1;
-	final int MENU_ITEM_UP = 2;
-	final int MENU_ITEM_DOWN = 3;
+	private static final int CONTEXTMENU_ITEM_NAME_CHANGE = Menu.FIRST;
+	private static final int CONTEXTMENU_ITEM_DELETE = Menu.FIRST + 1 ;
+	private static final int CONTEXTMENU_ITEM_UP = Menu.FIRST + 2 ;
+	private static final int CONTEXTMENU_ITEM_DOWN = Menu.FIRST + 3;
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		menu.setHeaderTitle(R.string.roidcast_context_menu_header);
-		menu.add(Menu.NONE, MENU_ITME_NAME_CHANGE , MENU_ITME_NAME_CHANGE, R.string.roidcast_context_menu_change_name);
-		menu.add(Menu.NONE, MENU_ITEM_DELETE , MENU_ITEM_DELETE, R.string.roidcast_context_menu_delete);
-		menu.add(Menu.NONE, MENU_ITEM_UP , MENU_ITEM_UP, R.string.roidcast_context_menu_up);
-		menu.add(Menu.NONE, MENU_ITEM_DOWN , MENU_ITEM_DOWN, R.string.roidcast_context_menu_down);
+		menu.add(Menu.NONE, CONTEXTMENU_ITEM_NAME_CHANGE , CONTEXTMENU_ITEM_NAME_CHANGE, R.string.roidcast_context_menu_change_name);
+		menu.add(Menu.NONE, CONTEXTMENU_ITEM_DELETE , CONTEXTMENU_ITEM_DELETE, R.string.roidcast_context_menu_delete);
+		menu.add(Menu.NONE, CONTEXTMENU_ITEM_UP , CONTEXTMENU_ITEM_UP, R.string.roidcast_context_menu_up);
+		menu.add(Menu.NONE, CONTEXTMENU_ITEM_DOWN , CONTEXTMENU_ITEM_DOWN, R.string.roidcast_context_menu_down);
 	}
 	
 	@Override
@@ -142,25 +144,25 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		int groupPosition = ExpandableListView.getPackedPositionGroup(menuinfo.packedPosition);
 		int childPosition = ExpandableListView.getPackedPositionChild(menuinfo.packedPosition);
 		
-		if(MENU_ITEM_DELETE == menuid){
+		if(CONTEXTMENU_ITEM_DELETE == menuid){
 			if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 				doDeleteGroup(groupPosition);
 			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
 				doDeleteChild(groupPosition,childPosition);
 			}	
-		}else if(MENU_ITEM_UP == menuid) {
+		}else if(CONTEXTMENU_ITEM_UP == menuid) {
 			if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 				doUpGroup(groupPosition);
 			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
 				doUpChild(groupPosition,childPosition);
 			}
-		}else if(MENU_ITEM_DOWN == menuid) {
+		}else if(CONTEXTMENU_ITEM_DOWN == menuid) {
 			if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 				doDownGroup(groupPosition);
 			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
 				doDownChild(groupPosition,childPosition);
 			}
-		}else if(MENU_ITME_NAME_CHANGE == menuid) {
+		}else if(CONTEXTMENU_ITEM_NAME_CHANGE == menuid) {
 			if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 				doNameChengeGroup(groupPosition);
 			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
@@ -263,6 +265,73 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		
 		AlertDialog dialog = builder.create();
 		dialog.show();
+	}
+	
+	
+	private static final int MENU_HOWTOUSE = Menu.FIRST;
+	private static final int MENU_ABOUT    = Menu.FIRST + 1;
+	
+	/** 
+	 * メニューの作成
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		boolean result = super.onCreateOptionsMenu(menu);
+		menu.add(0,MENU_HOWTOUSE,MENU_HOWTOUSE,R.string.roidcast_menu_howtouse)
+			.setIcon(android.R.drawable.ic_menu_help);
+		menu.add(0,MENU_ABOUT,MENU_ABOUT,R.string.roidcast_menu_about)
+			.setIcon(android.R.drawable.ic_menu_info_details);
+		
+		return result;
+	}
+	
+	/**
+	 *  メニューが選択された
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case MENU_HOWTOUSE:
+			// howtousePageを開く
+			Intent ihowto = new Intent();
+			ihowto.setAction(Intent.ACTION_VIEW);
+			ihowto.setData(Uri.parse(getString(R.string.roidcast_url_howtouse)));
+			
+			startActivity(ihowto);
+			return true;
+		case MENU_ABOUT:
+			// Dialog
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			final String title = getString(R.string.app_name);
+			TextView tv = new TextView(this);
+			tv.setClickable(true);
+			tv.setAutoLinkMask(Linkify.WEB_URLS);
+			tv.setText(getText(R.string.roidcast_menu_about_info));
+			
+			builder.setIcon(R.drawable.roidcast_icon_01);
+			builder.setTitle(getText(R.string.app_name));
+			
+			//builder.setMessage(getText(R.string.roidcast_menu_about_info));
+			builder.setView(tv);
+			
+			builder.setCancelable(true);
+			builder.setPositiveButton(getText(android.R.string.ok), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					;
+				}
+			});
+			
+			AlertDialog dialog = builder.create();
+			dialog.show();
+			
+			return true;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	/**
