@@ -29,7 +29,7 @@
 	
 	
 	<string name="reciveurl_could_not_parse">解析に失敗しました\n(本当にpodcast用rssデータですか???)</string>
-	<string name="roidcast_title_const">ケータイでpodcastを「楽」に\n使うための便利ツール。</string>
+	<string name="roidcast_title_const">ケータイでpodcastを手軽に\n使うための便利ツール。</string>
 	
 		<string name="roidcast_progress_message">Loading...  </string>
 </resources>

@@ -27,4 +27,10 @@ public class RoidcatUtil  {
 		e.printStackTrace(new PrintWriter(sw));
 		Log.e(Roidcast.TAG, sw.toString());
 	}
+	
+	public void iLog(Throwable e) {
+		StringWriter sw = new StringWriter(); 
+		e.printStackTrace(new PrintWriter(sw));
+		Log.i(Roidcast.TAG, sw.toString());
+	}
 }

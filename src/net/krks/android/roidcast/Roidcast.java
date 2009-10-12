@@ -18,6 +18,7 @@ package net.krks.android.roidcast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import net.krks.android.roidcast.Podcast.PodcastItem;
@@ -58,6 +59,7 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 	ExpandableListAdapter mAdapter;
 	
 	ArrayList<Podcast> loadData;
+	RoidcastConfig config;
 	
     public ArrayList<Podcast> getLoadData() {
 		return loadData;
@@ -73,6 +75,10 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
     	Log.d(TAG,"onCreate @@@ roidast");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        // load configdata
+        RoidcastFileIo r = new RoidcastFileIo(this);
+        config = r.doConfigLoad();
         
         ImageButton b = (ImageButton)findViewById(R.id.RecrawlButton);
         //RoidcastClickLisner roidcastClickLisner = new RoidcastClickLisner();
@@ -96,11 +102,26 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
 		super.onStart();
-		loadData = doLoad();
+		loadData = doPodcastDataLoad();
 		
-        doDraw();
+		/*
+		 * 最後にcrawlしたのが1日前だったら，再読み込みを行う。
+		 */
+		Calendar lastRecrawlCalender = Calendar.getInstance();
+		lastRecrawlCalender.setTime(config.getLastRecrawledDate());
+		
+		Calendar onedayBeforeCalender = Calendar.getInstance();
+		onedayBeforeCalender.add(Calendar.DAY_OF_YEAR,-1);
+		Log.i(Roidcast.TAG,lastRecrawlCalender.get(Calendar.DAY_OF_YEAR) + ":lastReclawl"); 
+		Log.i(Roidcast.TAG,onedayBeforeCalender.get(Calendar.DAY_OF_YEAR) + ":onedaybefore");
+		
+		
+		if(lastRecrawlCalender.before(onedayBeforeCalender)){
+			reCrawl();
+		}
+		
+		doDraw();
 	}
 	
 	protected void doDraw() {
@@ -495,9 +516,11 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 	
 	public void doSave() throws IOException{
     	RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
+    	r.doConfigSave(config);
     	r.doSave(loadData);
 	}
-	public ArrayList<Podcast> doLoad(){
+	
+	public ArrayList<Podcast> doPodcastDataLoad(){
 		RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
     	return r.doLoad();
 	}
@@ -622,30 +645,39 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		
 		// 再読み込み処理
 		if(v.getId() == R.id.RecrawlButton) {
-			loadingDialog = new ProgressDialog(this);
-			
-			loadingDialog.setMessage(getText(R.string.roidcast_progress_message));
-			loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			loadingDialog.show();
-			
-			final Handler handler = new Handler();
-			final Runnable returnMethod = new Runnable() {				
-				@Override
-				public void run() {
-					doReclawlThreadEnded();
-				}
-			};
-			
-			Thread t = new Thread() {
-				public void run() {
-					for(Podcast p:loadData){
-						p.reCrawl();
-					}
-					handler.post(returnMethod);
-				}
-			};
-			t.start();
+			reCrawl();
 		}
+	}
+	
+	/**
+	 * 全rss再読み込み処理
+	 */
+	private void reCrawl() {
+		loadingDialog = new ProgressDialog(this);
+		
+		loadingDialog.setMessage(getText(R.string.roidcast_progress_message));
+		loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		loadingDialog.show();
+		
+		final Handler handler = new Handler();
+		final Runnable returnMethod = new Runnable() {				
+			@Override
+			public void run() {
+				doReclawlThreadEnded();
+			}
+		};
+		
+		Thread t = new Thread() {
+			public void run() {
+				for(Podcast p:loadData){
+					p.reCrawl();
+				}
+				// データの再取得を行った日時を保存
+				config.setLastRecrawledDate(new Date());
+				handler.post(returnMethod);
+			}
+		};
+		t.start();
 	}
 	
 	/**

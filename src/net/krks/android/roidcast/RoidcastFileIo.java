@@ -28,22 +28,75 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.util.Log;
 
 /**
  * データをファイルに書き出す処理
  * @author kakkyz
  */
 public class RoidcastFileIo extends ContextWrapper {
-	private static final String FILE_ID = "podcast";
+	private static final String FILE_ID_PODCAST = "podcast";
+	private static final String FILE_ID_CONFIG = "roidcastconfig";
 
 	public RoidcastFileIo(Context base) {
 		super(base);
 	}
-
+	
+	public void doConfigSave(RoidcastConfig r) {
+		Log.i(Roidcast.TAG,"doConfigSave");
+		OutputStream o = null;
+		try {
+			o = openFileOutput(FILE_ID_CONFIG,MODE_PRIVATE);
+			ObjectOutputStream out = new ObjectOutputStream(o);
+			out.writeObject(r);
+			o.flush();
+		} catch (FileNotFoundException e) {
+			new RoidcatUtil().iLog(e);
+		} catch (IOException e) {
+			new RoidcatUtil().eLog(e);
+		} finally {
+			try {
+				if( o != null) {o.close();}
+			} catch (IOException e) {
+				new RoidcatUtil().eLog(e);
+			}
+		}
+	}
+	
+	public RoidcastConfig doConfigLoad() {
+		RoidcastConfig r = new RoidcastConfig();
+		ObjectInputStream in = null;
+    	try {
+			in = new ObjectInputStream(openFileInput(FILE_ID_CONFIG));
+			RoidcastConfig readObject = (RoidcastConfig)in.readObject();
+			if(null != readObject) {
+				r = readObject;
+			}
+		} catch (FileNotFoundException e) {
+			// 初回の場合、処理を続行
+			new RoidcatUtil().iLog(e);
+		} catch (IOException e) {
+			new RoidcatUtil().eLog(e);
+		} catch (ClassNotFoundException e) {
+			new RoidcatUtil().eLog(e);
+		} finally {
+			try {
+				if(in != null) { in.close(); }
+			} catch (IOException e) {
+				new RoidcatUtil().eLog(e);
+			}
+			
+		}
+		return r;
+	}
+	
+	
 	public void doSave(ArrayList<Podcast> a) throws IOException {
-		OutputStream o = openFileOutput(FILE_ID,MODE_PRIVATE);
+		OutputStream o = openFileOutput(FILE_ID_PODCAST,MODE_PRIVATE);
 		ObjectOutputStream out = new ObjectOutputStream(o);
 		out.writeObject(a);
+		o.flush();
+		o.close();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -51,14 +104,14 @@ public class RoidcastFileIo extends ContextWrapper {
 		ArrayList<Podcast> array = new ArrayList<Podcast>();
 		ObjectInputStream in = null;
     	try {
-			in = new ObjectInputStream(openFileInput(FILE_ID));
+			in = new ObjectInputStream(openFileInput(FILE_ID_PODCAST));
 			ArrayList<Podcast> readObject = (ArrayList<Podcast>)in.readObject();
 			if(null != readObject) {
 				array = readObject;
 			}
 		} catch (FileNotFoundException e) {
 			// 初回の場合、空のArrayListを返す
-			new RoidcatUtil().eLog(e);
+			new RoidcatUtil().iLog(e);
 		} catch (IOException e) {
 			new RoidcatUtil().eLog(e);
 		} catch (ClassNotFoundException e) {

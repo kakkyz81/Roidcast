@@ -22,12 +22,12 @@ import java.util.Date;
 
 /**
  * Podcast情報を持つためのクラス
- * $Id$
+ * $Id: 41be0ee00ec7693e255d561fa67a34d6e76d0f91 $
  * @author kakkyz
  * 
  */
 public class Podcast implements Serializable{
-	private static final long serialVersionUID = -2446412730923814808L;
+	private static final long serialVersionUID = 1L;
 	
 	@Override
 	public String toString() {
