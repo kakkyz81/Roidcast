@@ -92,6 +92,9 @@ public class RoidcastFileIo extends ContextWrapper {
 	
 	
 	public void doSave(ArrayList<Podcast> a) throws IOException {
+		// 0件データは保存しない(データ消失対策)
+		if(a.size() == 0) {return;}
+		
 		OutputStream o = openFileOutput(FILE_ID_PODCAST,MODE_PRIVATE);
 		ObjectOutputStream out = new ObjectOutputStream(o);
 		out.writeObject(a);
