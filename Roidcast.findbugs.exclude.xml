@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+<!-- 自動生成対象 -->
+  <Match> <Class name="net.krks.android.roidcast.R$attr" />     </Match>
+  <Match> <Class name="net.krks.android.roidcast.R$drawable" /> </Match>
+  <Match> <Class name="net.krks.android.roidcast.R$id" />       </Match>
+  <Match> <Class name="net.krks.android.roidcast.R$layout" />   </Match>
+  <Match> <Class name="net.krks.android.roidcast.R$string" />   </Match>
+ <!-- インナークラス関連、問題無し -->
+  <Match> <Class name="net.krks.android.roidcast.Podcast$PodcastItem" />
+ 	<BugPattern name ="SIC_INNER_SHOULD_BE_STATIC,SE_INNER_CLASS" />
+  </Match>
+
+</FindBugsFilter>

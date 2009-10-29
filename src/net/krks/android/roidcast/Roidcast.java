@@ -251,7 +251,6 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
 		final String title = podcast.getTitle();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		
 		// TODO message
 		builder.setMessage(getText(R.string.roidcast_context_menu_change_name));
 		
@@ -325,7 +324,6 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		case MENU_ABOUT:
 			// Dialog
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			final String title = getString(R.string.app_name);
 			TextView tv = new TextView(this);
 			tv.setClickable(true);
 			tv.setAutoLinkMask(Linkify.WEB_URLS);
@@ -641,7 +639,7 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 	
 	@Override
 	public void onClick(View v) {
-		ProgressDialog progressDialog = new ProgressDialog(this);
+//		ProgressDialog progressDialog = new ProgressDialog(this);
 		
 		// 再読み込み処理
 		if(v.getId() == R.id.RecrawlButton) {

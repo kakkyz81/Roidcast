@@ -20,27 +20,27 @@ import android.content.Context;
 import android.widget.TextView;
 
 public class RoidcastTextView extends TextView {
-	protected String AudioUri = null;
-	protected String MediaType = null;
+	protected String audioUri = null;
+	protected String mediaType = null;
 	
 	public RoidcastTextView(Context context) {
 		super(context);
 	}
 	
 	public void setAudioUri(String audioUri) {
-		AudioUri = audioUri;
+		this.audioUri = audioUri;
 	}
 
 	public String getAudioUri() {
-		return AudioUri;
+		return audioUri;
 	}
 
 	public String getMediaType() {
-		return MediaType != null ? MediaType : "";
+		return mediaType != null ? mediaType : "";
 	}
 
 	public void setMediaType(String mediaType) {
-		MediaType = mediaType;
+		this.mediaType = mediaType;
 	}
 
 		
