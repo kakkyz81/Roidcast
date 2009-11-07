@@ -29,7 +29,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.util.Log;
 
-public class XMLParseDataHttpGet extends DefaultHttpClient{
+public class RoidcastDataHttpGet extends DefaultHttpClient{
 	public HttpGet httpGet;
 	
 	/**
@@ -68,7 +68,7 @@ public class XMLParseDataHttpGet extends DefaultHttpClient{
       return null;
 	}
 
-	public XMLParseDataHttpGet() {
+	public RoidcastDataHttpGet() {
 		this.httpGet = new HttpGet();
 	}
 }

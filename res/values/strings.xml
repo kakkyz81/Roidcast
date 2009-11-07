@@ -11,6 +11,12 @@
 	<string name="roidcast_context_menu_change_name">change name</string>
 	<string name="roidcast_context_menu_up">up</string>
 	<string name="roidcast_context_menu_down">down</string>
+	<string name="roidcast_context_menu_item_save">save item</string>
+	<string name="roidcast_context_menu_item_save_on_group">can't save group.select child item.</string>
+	<string name="roidcast_context_menu_item_save_start">Download start.</string>
+	
+	<string name="roidcast_download_service_complete">Download Complete.</string>
+	<string name="roidcast_download_service_failed">Download failed.</string>
 	
 	<string name="roidcast_menu_about">about</string>
 	<string name="roidcast_menu_about_info">

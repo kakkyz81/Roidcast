@@ -45,7 +45,7 @@ public class XMLParse {
 	 */
 	public Podcast parsePodcastXML(String uri){
 		Log.d(Roidcast.TAG, "parsePodcastXML:" + uri);
-		XMLParseDataHttpGet xmlParceDataHttpGet = new XMLParseDataHttpGet();
+		RoidcastDataHttpGet xmlParceDataHttpGet = new RoidcastDataHttpGet();
 		InputStream in = xmlParceDataHttpGet.getImputStreamOnWeb(uri);
 		Podcast p = new Podcast();
 		p.setXmlUrl(uri);

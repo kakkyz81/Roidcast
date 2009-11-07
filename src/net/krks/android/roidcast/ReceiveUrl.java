@@ -46,8 +46,6 @@ public class ReceiveUrl extends Activity {
     	final Intent intent = getIntent();
     	final String uri = intent.getStringExtra(Intent.EXTRA_TEXT);
     	
-    	Log.d(Roidcast.TAG,"onCreate @@@ roidast" + uri);
-    	
     	// loadingのダイアログを出す
 		loadingDialog = new ProgressDialog(this);
 		
@@ -98,7 +96,7 @@ public class ReceiveUrl extends Activity {
     	if(podcast == null) { throw new AssertionError(); }
 
     	RoidcastFileIo r = new RoidcastFileIo(getApplicationContext());
-    	ArrayList<Podcast> podlist = r.doLoad(); // TODO 読み込んで追加して保存という手順が非効率な気がする
+    	ArrayList<Podcast> podlist = r.doLoad(); 
     	// 重複時は保存しない
     	if(!isDuplicate(podlist, podcast)){
 			podlist.add(podcast);

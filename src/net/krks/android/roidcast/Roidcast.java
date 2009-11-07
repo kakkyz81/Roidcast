@@ -138,9 +138,10 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 	
 	
 	private static final int CONTEXTMENU_ITEM_NAME_CHANGE = Menu.FIRST;
-	private static final int CONTEXTMENU_ITEM_DELETE = Menu.FIRST + 1 ;
-	private static final int CONTEXTMENU_ITEM_UP = Menu.FIRST + 2 ;
-	private static final int CONTEXTMENU_ITEM_DOWN = Menu.FIRST + 3;
+	private static final int CONTEXTMENU_ITEM_SAVE = Menu.FIRST + 1 ;
+	private static final int CONTEXTMENU_ITEM_DELETE = Menu.FIRST + 2 ;
+	private static final int CONTEXTMENU_ITEM_UP = Menu.FIRST + 3 ;
+	private static final int CONTEXTMENU_ITEM_DOWN = Menu.FIRST + 4;
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -148,6 +149,7 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		super.onCreateContextMenu(menu, v, menuInfo);
 		menu.setHeaderTitle(R.string.roidcast_context_menu_header);
 		menu.add(Menu.NONE, CONTEXTMENU_ITEM_NAME_CHANGE , CONTEXTMENU_ITEM_NAME_CHANGE, R.string.roidcast_context_menu_change_name);
+		menu.add(Menu.NONE, CONTEXTMENU_ITEM_SAVE , CONTEXTMENU_ITEM_SAVE, R.string.roidcast_context_menu_item_save);
 		menu.add(Menu.NONE, CONTEXTMENU_ITEM_DELETE , CONTEXTMENU_ITEM_DELETE, R.string.roidcast_context_menu_delete);
 		menu.add(Menu.NONE, CONTEXTMENU_ITEM_UP , CONTEXTMENU_ITEM_UP, R.string.roidcast_context_menu_up);
 		menu.add(Menu.NONE, CONTEXTMENU_ITEM_DOWN , CONTEXTMENU_ITEM_DOWN, R.string.roidcast_context_menu_down);
@@ -171,6 +173,12 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
 				doDeleteChild(groupPosition,childPosition);
 			}	
+		}else if(CONTEXTMENU_ITEM_SAVE == menuid) {
+			if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+				doSaveGroup(groupPosition);
+			}else if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+				doSaveChild(groupPosition,childPosition);
+			}
 		}else if(CONTEXTMENU_ITEM_UP == menuid) {
 			if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 				doUpGroup(groupPosition);
@@ -196,6 +204,98 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		return true;
 	}
 	
+	/**
+	 * 選択された情報を保存する
+	 * @param groupPosition
+	 * @param childPosition
+	 */
+	private void doSaveChild(int groupPosition, int childPosition) {
+		Podcast podcast = (Podcast)mAdapter.getGroup(groupPosition);
+		ArrayList<PodcastItem> items  = podcast.getItems();
+		PodcastItem saveItem = items.get(childPosition);
+		
+		RoidcastFileIo r = new RoidcastFileIo(this);
+			
+		Toast.makeText(getApplicationContext()
+		, getString(R.string.roidcast_context_menu_item_save_start)
+		, Toast.LENGTH_SHORT).show();
+		
+		try {
+			r.saveItem(saveItem);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		Thread t = new Thread() {
+//			public void run() {
+//				try {
+//					r.saveItem(saveItem);
+//				}catch(Exception e) {
+//					new RoidcatUtil().eLog(e);
+//				}
+//			}
+//		};
+//		t.start();
+			
+//		
+//		synchronized (this) {
+//			final Handler handler = new Handler();
+//			
+//			final Runnable successSave = new Runnable() {
+//				@Override
+//				public void run() {
+//					Toast.makeText(getApplicationContext()
+//							, getString(R.string.roidcast_context_menu_item_save_success)
+//							, Toast.LENGTH_SHORT).show();
+//				}
+//			};
+//			final Runnable failedSave = new Runnable() {
+//				@Override
+//				public void run() {
+//					Toast.makeText(getApplicationContext()
+//							, getString(R.string.roidcast_context_menu_item_save_fail)
+//							, Toast.LENGTH_SHORT).show();
+//				}
+//			};
+//			
+//			Thread t = new Thread() {
+//				public void run() {
+//					try {
+//						r.saveItem(saveItem);
+//						handler.post(successSave);
+//					}catch(Exception e) {
+//						new RoidcatUtil().eLog(e);
+//						handler.post(failedSave);
+//					}
+//				}
+//			};
+//			t.start();
+//				public void run() {
+//					try{
+//						r.saveItem(saveItem);
+//
+//					}catch(Exception e) {
+//						Toast.makeText(getApplicationContext()
+//								, getString(R.string.roidcast_context_menu_item_save_fail)
+//								, Toast.LENGTH_SHORT).show();
+//					}		
+//				}
+//		
+//		}		
+		
+	}
+
+	/**
+	 * グループは保存できないのでToastを出して終了
+	 * @param groupPosition
+	 */
+	private void doSaveGroup(int groupPosition) {
+		Toast.makeText(getApplicationContext()
+		, getString(R.string.roidcast_context_menu_item_save_on_group)
+		, Toast.LENGTH_SHORT).show();
+	}
+
 	/**
 	 * 選択された要素の名前を変更する
 	 * @param groupPosition
