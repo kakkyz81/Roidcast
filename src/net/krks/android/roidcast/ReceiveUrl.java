@@ -105,7 +105,7 @@ public class ReceiveUrl extends Activity {
 			try {
 				r.doSave(podlist);
 			} catch (IOException e) {
-				new RoidcatUtil().eLog(e);
+				new RoidcastUtil().eLog(e);
 			}
     	}
     	

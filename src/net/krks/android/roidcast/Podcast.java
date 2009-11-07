@@ -22,7 +22,7 @@ import java.util.Date;
 
 /**
  * Podcast情報を持つためのクラス
- * $Id: 41be0ee00ec7693e255d561fa67a34d6e76d0f91 $
+ * $Id: 186e68c64a9f54c12fae9dcce4c22fffaef714f2 $
  * @author kakkyz
  * 
  */

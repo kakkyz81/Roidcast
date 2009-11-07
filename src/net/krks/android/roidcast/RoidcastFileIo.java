@@ -51,14 +51,14 @@ public class RoidcastFileIo extends ContextWrapper {
 			out.writeObject(r);
 			o.flush();
 		} catch (FileNotFoundException e) {
-			new RoidcatUtil().iLog(e);
+			new RoidcastUtil().iLog(e);
 		} catch (IOException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		} finally {
 			try {
 				if( o != null) {o.close();}
 			} catch (IOException e) {
-				new RoidcatUtil().eLog(e);
+				new RoidcastUtil().eLog(e);
 			}
 		}
 	}
@@ -74,16 +74,16 @@ public class RoidcastFileIo extends ContextWrapper {
 			}
 		} catch (FileNotFoundException e) {
 			// 初回の場合、処理を続行
-			new RoidcatUtil().iLog(e);
+			new RoidcastUtil().iLog(e);
 		} catch (IOException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		} catch (ClassNotFoundException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		} finally {
 			try {
 				if(in != null) { in.close(); }
 			} catch (IOException e) {
-				new RoidcatUtil().eLog(e);
+				new RoidcastUtil().eLog(e);
 			}
 			
 		}
@@ -114,16 +114,16 @@ public class RoidcastFileIo extends ContextWrapper {
 			}
 		} catch (FileNotFoundException e) {
 			// 初回の場合、空のArrayListを返す
-			new RoidcatUtil().iLog(e);
+			new RoidcastUtil().iLog(e);
 		} catch (IOException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		} catch (ClassNotFoundException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		} finally {
 			try {
 				if(in != null) { in.close(); }
 			} catch (IOException e) {
-				new RoidcatUtil().eLog(e);
+				new RoidcastUtil().eLog(e);
 			}
 			
 		}

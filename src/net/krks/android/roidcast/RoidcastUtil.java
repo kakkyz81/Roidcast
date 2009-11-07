@@ -21,7 +21,7 @@ import java.io.StringWriter;
 
 import android.util.Log;
 
-public class RoidcatUtil  {
+public class RoidcastUtil  {
 	public void eLog(Throwable e) {
 		StringWriter sw = new StringWriter(); 
 		e.printStackTrace(new PrintWriter(sw));
