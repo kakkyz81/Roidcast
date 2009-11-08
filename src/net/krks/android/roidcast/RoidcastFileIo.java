@@ -147,36 +147,21 @@ public class RoidcastFileIo extends ContextWrapper {
 	public static final String EXTRA_TITLE = "TItle";
 	
 	/**
-	 * アイテムをダウンロードして保存する
+	 * アイテムをダウンロードして保存する(実際の処理は呼び出したServiceが行う)
 	 * @param saveItem
 	 * @return boolean 成功したらtrue 何か例外があればfalse
 	 * @throws IOException 
 	 */
-	public void saveItem(final PodcastItem saveItem) throws IOException {
-		//Handler h = new Handler;
+	public void saveItem(final PodcastItem saveItem) throws IOException {		
+		//Log.i(Roidcast.TAG,"service start.");
 		
-		Log.i(Roidcast.TAG,"service start thread start.");
-		Thread t = new Thread(new Runnable() {
-			public void run() {
-				try {
-					Log.i(Roidcast.TAG,"service start start.");
-					Intent i = new Intent(getApplicationContext(), RoidcastDownloadService.class);
-					i.putExtra(EXTRA_URI, saveItem.getAudioUri());
-					i.putExtra(EXTRA_MEDIA_TYPE, saveItem.getMediaType());
-					i.putExtra(EXTRA_TITLE, saveItem.getTitle());
-					startService(i);
-					
-					
-					
-					Log.i(Roidcast.TAG,"service start end.");
-				}catch(Exception e) {
-					new RoidcatUtil().eLog(e);
-				}	
-			}
-		});
-			
-		t.start();
-		Log.i(Roidcast.TAG,"service start thread start end.");
+		Intent i = new Intent(getApplicationContext(), RoidcastDownloadService.class);
+		i.putExtra(EXTRA_URI, saveItem.getAudioUri());
+		i.putExtra(EXTRA_MEDIA_TYPE, saveItem.getMediaType());
+		i.putExtra(EXTRA_TITLE, saveItem.getTitle());
+		startService(i);
+
+	//	Log.i(Roidcast.TAG,"service start end.");
 		
 		}
 

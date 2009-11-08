@@ -27,46 +27,79 @@ import android.util.Log;
 
 public class RoidcastDownloadService extends Service {
 	
-	private Handler mHandler;
-	private boolean mRunning;
-	private String mUri;
-	private String mMediaType;
-	private String mTitle;
 	private NotificationManager mManager;
 	
 	
+	/**
+	 * 拡張子を返す
+	 * @param uri
+	 * @return
+	 */
+	private String getStringExteinsion(final String uri) {
+		try {
+			String[] tmpStrings = uri.split("\\.");
+			return tmpStrings[tmpStrings.length -1];
+		} catch (Exception e) {
+			return "";
+		}
+	}
 	
-	public void doDown() {
-		Log.i(Roidcast.TAG,"DownloadService start. uri=" + mUri);
-		// TODO Auto-generated method stub
+	/**
+	 * ファイル名を返す
+	 * @param uri
+	 * @return
+	 */
+	private String getFileName(final String uri) {
+		try {
+			String[] tmpStrings = uri.split("/");
+			return tmpStrings[tmpStrings.length -1];
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	
+	/**
+	 * "audio/mpeg" のとき、"audio"を返す
+	 */
+	private String getMediaTypeFirst(final String mediaType) {
+		try {
+			String[] tmpStringsForMediaType = mediaType.split("/");
+			return tmpStringsForMediaType[0];
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	/**
+	 * ダウンロードを実行する
+	 * @param uri
+	 * @param mediaType
+	 * @param title
+	 */
+	public void doDown(String uri,String mediaType,String title) {
+		Log.i(Roidcast.TAG,"DownloadService start. uri=" + uri);
+		
 		RoidcastDataHttpGet httpget = new RoidcastDataHttpGet();
-		InputStream in = httpget.getImputStreamOnWeb(mUri);
-
-		String[] tmpString = mUri.split("/");
-		String fileName = tmpString[tmpString.length -1];
+		InputStream in = httpget.getImputStreamOnWeb(uri);
 		
-		File file = new File(Environment.getExternalStorageDirectory(),fileName);
+		File file = new File(Environment.getExternalStorageDirectory(),getFileName(uri));
 		
-		String[] tmpStringForExtension = fileName.split("\\.");
-		String exteinsion = tmpStringForExtension[tmpStringForExtension.length - 1];
-		
-		String[] tmpStringsForMediaType = mMediaType.split("/");
-		String mediaType = tmpStringsForMediaType[0];
+		String exteinsion = getStringExteinsion(uri);
+		String mediaTypeFirst = getMediaTypeFirst(mediaType);
 		
 		ContentValues values = new ContentValues(3);
-		Uri uri;
+		Uri mediaStoreUri;
 		
 		// save for MediaStore
-		if(isMediaTypeAudio(mediaType,exteinsion)) {
-			values.put(android.provider.MediaStore.Audio.Media.MIME_TYPE,mMediaType);
-			values.put(android.provider.MediaStore.Audio.Media.TITLE,mTitle);
+		if(isMediaTypeAudio(mediaTypeFirst,exteinsion)) {
+			values.put(android.provider.MediaStore.Audio.Media.MIME_TYPE,mediaTypeFirst);
+			values.put(android.provider.MediaStore.Audio.Media.TITLE,title);
 			values.put(android.provider.MediaStore.Audio.Media.DATA, file.getAbsolutePath());
-			uri = getContentResolver().insert(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values);
-		}else if(isMediaTypeVideo(mediaType,exteinsion)){
-			values.put(android.provider.MediaStore.Video.Media.MIME_TYPE,mMediaType);
-			values.put(android.provider.MediaStore.Video.Media.TITLE,mTitle);
+			mediaStoreUri = getContentResolver().insert(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values);
+		}else if(isMediaTypeVideo(mediaTypeFirst,exteinsion)){
+			values.put(android.provider.MediaStore.Video.Media.MIME_TYPE,mediaTypeFirst);
+			values.put(android.provider.MediaStore.Video.Media.TITLE,title);
 			values.put(android.provider.MediaStore.Video.Media.DATA, file.getAbsolutePath());
-			uri = getContentResolver().insert(android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+			mediaStoreUri = getContentResolver().insert(android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
 		}else {
 			throw new RuntimeException("unknown media type");
 		}
@@ -75,8 +108,9 @@ public class RoidcastDownloadService extends Service {
 		BufferedInputStream bin = null;
 		
 		try {
+			/* バッファ読み込みと保存 */
 			bin = new BufferedInputStream(in, 1024*8);
-			bout = new BufferedOutputStream(getContentResolver().openOutputStream(uri),1024*8);
+			bout = new BufferedOutputStream(getContentResolver().openOutputStream(mediaStoreUri),1024*8);
 						
 			byte buf[] = new byte[1024*8];
 			int len;
@@ -84,13 +118,13 @@ public class RoidcastDownloadService extends Service {
 				bout.write(buf,0,len);
 			}
 			bout.flush();
-			Log.i(Roidcast.TAG,"DownloadService normal end. uri=" + mUri);
+			Log.i(Roidcast.TAG,"DownloadService normal end. uri=" + uri);
 			
 			Notification n = new Notification();
 			PendingIntent pintent = PendingIntent.getActivity(this, 0, new Intent(this,Roidcast.class), 0);
 			n.setLatestEventInfo(getApplicationContext(),
 								getString(R.string.roidcast_download_service_complete),
-								mTitle,
+								title,
 								pintent);
 			n.when = System.currentTimeMillis();
 			n.tickerText = getString(R.string.roidcast_download_service_complete);
@@ -103,7 +137,7 @@ public class RoidcastDownloadService extends Service {
 			PendingIntent pintent = PendingIntent.getActivity(this, 0, new Intent(this,Roidcast.class), Notification.FLAG_AUTO_CANCEL);
 			n.setLatestEventInfo(getApplicationContext(),
 								getString(R.string.roidcast_download_service_failed),
-								mTitle,
+								title,
 								pintent);
 			n.when = System.currentTimeMillis();
 			n.tickerText = getString(R.string.roidcast_download_service_failed);
@@ -137,8 +171,6 @@ public class RoidcastDownloadService extends Service {
 	public void onCreate() {
 		Log.i(Roidcast.TAG,"RoidcastDownladService:onCreate");
 		super.onCreate();
-		mRunning = false;
-		mHandler = new Handler();
 		mManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
@@ -146,21 +178,22 @@ public class RoidcastDownloadService extends Service {
 	@Override
 	public void onDestroy() {
 		Log.i(Roidcast.TAG,"RoidcastDownladService:onDestroy");
-		mRunning = false;
 		super.onDestroy();
 	}
 
 
 	@Override
-	public void onStart(Intent intent, int startId) {
+	public synchronized void onStart(final Intent intent, int startId) {
 		Log.i(Roidcast.TAG,"RoidcastDownladService:onStart " + startId);
-		
-	//	super.onStart(intent, startId);
-		mUri = intent.getStringExtra(RoidcastFileIo.EXTRA_URI);
-		mMediaType = intent.getStringExtra(RoidcastFileIo.EXTRA_MEDIA_TYPE);
-		mTitle = intent.getStringExtra(RoidcastFileIo.EXTRA_TITLE);
-//		mHandler.post(this); // run()メソッドを起動
-		doDown();
+		Thread t = new Thread() {
+			public void run() {
+				doDown(intent.getStringExtra(RoidcastFileIo.EXTRA_URI),
+					   intent.getStringExtra(RoidcastFileIo.EXTRA_MEDIA_TYPE),
+					   intent.getStringExtra(RoidcastFileIo.EXTRA_TITLE));			
+			}
+		};
+		t.start();
+
 	}
 
 
