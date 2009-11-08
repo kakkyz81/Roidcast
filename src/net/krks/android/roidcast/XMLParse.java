@@ -152,9 +152,9 @@ public class XMLParse {
 			if(p.getItems().size() > MAXITEMS) { done = true; }
 			
 		} catch (XmlPullParserException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		} catch (IOException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		}
 		// no item is parse error!
 		if(p.isEmpty()) {p = null;}

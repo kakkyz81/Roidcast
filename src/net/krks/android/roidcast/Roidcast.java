@@ -96,7 +96,7 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		try {
 			doSave();
 		} catch (IOException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		}
 	}
 
@@ -603,9 +603,9 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 				*/
 				
 				Toast.makeText(getApplicationContext(), R.string.activity_notfound, Toast.LENGTH_SHORT).show();
-				new RoidcatUtil().eLog(e);
+				new RoidcastUtil().eLog(e);
 			} catch (IOException e) {
-				new RoidcatUtil().eLog(e);
+				new RoidcastUtil().eLog(e);
 			}
 			return true;
 		}
@@ -789,7 +789,7 @@ public class Roidcast extends ExpandableListActivity  implements View.OnClickLis
 		try {
 			doSave();
 		} catch (IOException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		}
 		doDraw();
 	}

@@ -44,7 +44,7 @@ public class RoidcastDataHttpGet extends DefaultHttpClient{
 		try {
 			httpGet.setURI(new URI(uri));
 		} catch(URISyntaxException ex){
-			new RoidcatUtil().eLog(ex);
+			new RoidcastUtil().eLog(ex);
 			return null;
 		}
 		
@@ -60,9 +60,9 @@ public class RoidcastDataHttpGet extends DefaultHttpClient{
 			}
 		    return response.getEntity().getContent();
 		} catch (ClientProtocolException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		} catch (IOException e) {
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		}
 		
       return null;
