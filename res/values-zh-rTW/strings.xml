@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Roidcast</string>
+	<string name="empty_message">空</string>
+	
+	<string name="activity_notfound">無法在此機器上播放播客。</string>
+	<string name="roidcast_context_menu_header">Roidcast 功能表</string>
+	<string name="roidcast_context_menu_delete">移除</string>
+	<string name="roidcast_context_menu_delete_do"> 移除?</string>
+	<string name="roidcast_context_menu_delete_done"> 已移除。</string>
+	<string name="roidcast_context_menu_change_name">變更名稱</string>
+	<string name="roidcast_context_menu_up">上</string>
+	<string name="roidcast_context_menu_down">下</string>
+	
+	<string name="roidcast_menu_about">關於</string>
+	<string name="roidcast_menu_about_info">
+	使用您的 Android 裝置播放播客。\n
+	\n
+	檢視更多資訊 \n
+	http://krks.net/android/roidcast/index.php \n
+	
+	</string>
+	
+	<string name="roidcast_menu_howtouse">如何使用</string>
+	
+	<string name="roidcast_url_about">http://krks.net/android/roidcast/index.php</string>
+	<string name="roidcast_url_howtouse">http://krks.net/android/roidcast/howtouse1.php</string>
+	
+	
+	<string name="reciveurl_could_not_parse">無法分析此頁。\n(不是rss播客???)</string>
+	
+	<string name="roidcast_title_const">使用 Roidcast 在外收聽播客。\n非常有價值。</string>
+	<string name="roidcast_progress_message">載入中...  </string>
+</resources>
