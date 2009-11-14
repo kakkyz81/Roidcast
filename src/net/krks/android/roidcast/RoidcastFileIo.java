@@ -30,7 +30,6 @@ import net.krks.android.roidcast.Podcast.PodcastItem;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.os.Handler;
 import android.util.Log;
 
 /**

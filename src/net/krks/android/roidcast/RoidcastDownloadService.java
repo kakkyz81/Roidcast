@@ -3,14 +3,8 @@ package net.krks.android.roidcast;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-
-import net.krks.android.roidcast.R;
-import net.krks.android.roidcast.R.drawable;
-import net.krks.android.roidcast.R.string;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -21,7 +15,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -33,7 +26,7 @@ public class RoidcastDownloadService extends Service {
 	/**
 	 * 拡張子を返す
 	 * @param uri
-	 * @return
+	 * @return 
 	 */
 	private String getStringExteinsion(final String uri) {
 		try {
@@ -81,7 +74,17 @@ public class RoidcastDownloadService extends Service {
 		RoidcastDataHttpGet httpget = new RoidcastDataHttpGet();
 		InputStream in = httpget.getImputStreamOnWeb(uri);
 		
-		File file = new File(Environment.getExternalStorageDirectory(),getFileName(uri));
+		File file = null;
+		File dir = null;
+		dir = new File(Environment.getExternalStorageDirectory() + "/" +
+				getString(R.string.app_name));
+		file = new File(dir,getFileName(uri));
+		
+		if(!dir.exists()) {
+			if(!dir.mkdir()){
+				throw new RuntimeException("mkdir failed");
+			}
+		}
 		
 		String exteinsion = getStringExteinsion(uri);
 		String mediaTypeFirst = getMediaTypeFirst(mediaType);
@@ -121,7 +124,7 @@ public class RoidcastDownloadService extends Service {
 			Log.i(Roidcast.TAG,"DownloadService normal end. uri=" + uri);
 			
 			Notification n = new Notification();
-			PendingIntent pintent = PendingIntent.getActivity(this, 0, new Intent(this,Roidcast.class), 0);
+			PendingIntent pintent = PendingIntent.getActivity(this, 0, new Intent(getApplicationContext(),Roidcast.class), 0);
 			n.setLatestEventInfo(getApplicationContext(),
 								getString(R.string.roidcast_download_service_complete),
 								title,
@@ -134,7 +137,8 @@ public class RoidcastDownloadService extends Service {
 			
 		} catch (Exception e) {
 			Notification n = new Notification();
-			PendingIntent pintent = PendingIntent.getActivity(this, 0, new Intent(this,Roidcast.class), Notification.FLAG_AUTO_CANCEL);
+			PendingIntent pintent = PendingIntent.getActivity(this, 0, new Intent(getApplicationContext(),Roidcast.class), 0);
+			
 			n.setLatestEventInfo(getApplicationContext(),
 								getString(R.string.roidcast_download_service_failed),
 								title,
@@ -144,20 +148,20 @@ public class RoidcastDownloadService extends Service {
 			n.icon = R.drawable.roidcast_icon_01;
 			
 			mManager.notify(R.string.app_name,n);
-			new RoidcatUtil().eLog(e);
+			new RoidcastUtil().eLog(e);
 		} finally {
 			if(null != bout) {
 				try {
 					bout.close();
 				} catch (IOException e) {
-					new RoidcatUtil().eLog(e);
+					new RoidcastUtil().eLog(e);
 				}
 			}
 			if(null != bin) {
 				try {
 					bin.close();
 				} catch (IOException e) {
-					new RoidcatUtil().eLog(e);
+					new RoidcastUtil().eLog(e);
 				}
 			}
 			stopSelf();

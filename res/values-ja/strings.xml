@@ -11,6 +11,13 @@
 	<string name="roidcast_context_menu_change_name">名前の変更</string>
 	<string name="roidcast_context_menu_up">一つ上へ</string>
 	<string name="roidcast_context_menu_down">一つ下へ</string>
+	<string name="roidcast_context_menu_item_save">ダウンロード</string>
+	<string name="roidcast_context_menu_item_save_on_group">グループではダウンロードできません。</string>
+	<string name="roidcast_context_menu_item_save_start">ダウンロードを開始します</string>
+	
+	<string name="roidcast_download_service_complete">ダウンロード完了</string>
+	<string name="roidcast_download_service_failed">ダウンロード失敗</string>
+
 
 	<string name="roidcast_menu_about">情報</string>
 	<string name="roidcast_menu_about_info">
